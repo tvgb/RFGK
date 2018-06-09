@@ -9,7 +9,9 @@
   "author": "Trym Vegard Gjelseth-Borgen",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.5.1",
     "express": "^4.16.3",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "sqlite": "^2.9.2"
   }
 }
