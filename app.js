@@ -8,6 +8,7 @@ app.use('/static', express.static(path.join(__dirname, 'public')));
 
 
 app.get('/', function(req, res) {
+    console.log("Someone visited");
     res.sendFile(path.join(__dirname + '/public/static_html/index.html'));
 });
 
