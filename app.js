@@ -98,7 +98,7 @@ function getConnection() {
     const connection = mysql.createConnection({
         host: '158.38.166.221',
         user: 'Trym',
-        password: process.env.DATABASE_PASSWORD,
+        password: '289twauU',
         database: 'rfgk'
     });
     return connection;
