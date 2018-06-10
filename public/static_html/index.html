@@ -12,7 +12,7 @@
 
     <nav class="navbar navbar-expand-md bg-dark navbar-dark">
         <!-- Brand -->
-        <a class="navbar-brand" href="/">Rønvik Fribeegolf</a>
+        <a class="navbar-brand" href="/top10">Rønvik Fribeegolf</a>
 
         <!-- Toggler/collapsibe Button -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -23,25 +23,35 @@
         <div class="collapse navbar-collapse " id="collapsibleNavbar">
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item">
+                    <a class="nav-link" href="/top10">Top 10</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/leaderboard">Ledertavle</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/Volleydisc">Volleydisc</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Beste runde</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Diverse</a>
                 </li>
             </ul>
         </div>
     </nav>
 
-    <div class="d-flex align-items-center justify-content-center h-100">
-        <div class="d-flex flex-column">
-            <h4 class="text align-self-center p-2">Ingenting skjer på denne siden ennå . . .</h4>
+    <div class="indexDiv container">
+        <div class="container">
+            <div id="menuRow" class="row">
+                <div class="col-lg-6">
+
+                </div>
+                <div class="col-lg-6">
+                    <h5 class="text text-center">Rønvik<br>Frisbeegolf</h5>
+                </div>
+            </div>
         </div>
+
     </div>
 
     <script src="static/javascript/jquery-3.3.1.min.js"></script>
     <script src="static/javascript/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="static/javascript/ajax.js"></script>
 </body>
 </html>

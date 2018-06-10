@@ -1,3 +1,13 @@
 .navbar {
     margin-bottom: 20px;
 }
+
+.indexDiv {
+    height: 500px;
+}
+
+#welcomeText {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
