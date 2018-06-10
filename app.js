@@ -101,6 +101,9 @@ function getConnection() {
         password: process.env.DATABASE_PASSWORD,
         database: 'rfgk'
     });
+
+    console.log(process.env.DATABASE_PASSWORD);
+
     return connection;
 }
 
