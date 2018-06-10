@@ -19,12 +19,23 @@ function getPlayer(func, player_id) {
 }
 
 function getRounds(func, course_id) {
+    /*
     axios.get('/rounds/'+course_id)
         .then(function (response) {
             func(response.data);
         })
         .catch(function (error) {
             console.log(error);
+        });
+    */
+
+    $.ajax({
+        method: "GET",
+        url: "/rounds/" + course_id,
+    })
+        .done(function(response) {
+            console.log(response);
+            func(response);
         });
 }
 
