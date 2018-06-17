@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const mysql = require('mysql');
+const config = require('./config');
+
 
 const app = express();
 
@@ -96,13 +98,11 @@ app.get('/leaderboard/:course_id', (req, res, next) => {
 
 function getConnection() {
     const connection = mysql.createConnection({
-        host: '158.38.166.221',
-        user: 'Trym',
-        password: process.env.DATABASE_PASSWORD,
-        database: 'rfgk'
+        host: config.db.host,
+        user: config.db.user,
+        password: config.db.password,
+        database: config.db.database
     });
-
-    console.log(process.env.DATABASE_PASSWORD);
 
     return connection;
 }

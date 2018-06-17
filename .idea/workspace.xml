@@ -2,8 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a1f25aa-5e01-4b9b-b5a3-e182d75017b4" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/static_html/Volleydisc.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/static_html/Volleydisc.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/javascript/ajax.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/javascript/ajax.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/javascript/leaderboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/javascript/leaderboard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/javascript/top10.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/javascript/top10.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/static_html/top10.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/static_html/top10.html" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -17,83 +24,47 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/static_html/index.html">
+      <file leaf-file-name="config.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="267">
-              <caret line="14" column="44" selection-start-line="14" selection-start-column="44" selection-end-line="14" selection-end-column="44" />
+            <state relative-caret-position="300">
+              <caret line="15" column="24" lean-forward="true" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mainComponents.css" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/stylesheets/mainComponents.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="leaderboard.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/javascript/leaderboard.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="14" selection-start-line="14" selection-end-line="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="top10.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/javascript/top10.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="402">
-              <caret line="42" column="11" lean-forward="true" selection-start-line="42" selection-start-column="11" selection-end-line="42" selection-end-column="11" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="leaderboard.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/static_html/leaderboard.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
-              <caret line="14" column="40" selection-start-line="14" selection-start-column="40" selection-end-line="14" selection-end-column="40" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="app.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="222">
-              <caret line="100" column="27" selection-start-line="100" selection-start-column="27" selection-end-line="100" selection-end-column="27" />
+            <state relative-caret-position="561">
+              <caret line="103" column="36" selection-start-line="103" selection-start-column="36" selection-end-line="103" selection-end-column="36" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ajax.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ajax.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/javascript/ajax.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="580">
-              <caret line="29" column="6" lean-forward="true" selection-start-line="29" selection-start-column="6" selection-end-line="29" selection-end-column="6" />
+            <state relative-caret-position="461">
+              <caret line="27" column="11" selection-start-line="27" selection-start-column="11" selection-end-line="27" selection-end-column="11" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Volleydisc.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/static_html/Volleydisc.html">
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="292">
-              <caret line="87" column="83" selection-start-line="87" selection-start-column="83" selection-end-line="87" selection-end-column="83" />
+            <state relative-caret-position="858">
+              <caret line="94" column="7" selection-start-line="94" selection-start-column="7" selection-end-line="94" selection-end-column="7" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="top10.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/static_html/top10.html">
+      <file leaf-file-name=".env" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.env">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-898">
-              <caret column="15" lean-forward="true" selection-start-column="15" selection-end-column="15" />
+            <state>
+              <caret column="28" selection-start-column="28" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -104,8 +75,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="JavaScript File" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -118,18 +89,19 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/server.js" />
         <option value="$PROJECT_DIR$/migrations/001-initial-schema.sql" />
-        <option value="$PROJECT_DIR$/.env" />
         <option value="$PROJECT_DIR$/api/database.js" />
         <option value="$PROJECT_DIR$/public/javascript/tabelloversikt.js" />
-        <option value="$PROJECT_DIR$/public/javascript/top10.js" />
-        <option value="$PROJECT_DIR$/public/javascript/leaderboard.js" />
         <option value="$PROJECT_DIR$/public/stylesheets/mainComponents.css" />
         <option value="$PROJECT_DIR$/public/static_html/index.html" />
-        <option value="$PROJECT_DIR$/public/static_html/top10.html" />
         <option value="$PROJECT_DIR$/public/static_html/leaderboard.html" />
-        <option value="$PROJECT_DIR$/public/javascript/ajax.js" />
         <option value="$PROJECT_DIR$/public/static_html/Volleydisc.html" />
+        <option value="$PROJECT_DIR$/public/javascript/leaderboard.js" />
+        <option value="$PROJECT_DIR$/public/static_html/top10.html" />
+        <option value="$PROJECT_DIR$/public/javascript/top10.js" />
         <option value="$PROJECT_DIR$/app.js" />
+        <option value="$PROJECT_DIR$/.env" />
+        <option value="$PROJECT_DIR$/config.js" />
+        <option value="$PROJECT_DIR$/public/javascript/ajax.js" />
       </list>
     </option>
   </component>
@@ -149,7 +121,7 @@
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
     <option name="width" value="1440" />
     <option name="height" value="900" />
   </component>
@@ -234,31 +206,31 @@
       <workItem from="1527625835659" duration="12414000" />
       <workItem from="1528451275746" duration="208000" />
       <workItem from="1528464067991" duration="26207000" />
-      <workItem from="1528664860177" duration="7905000" />
+      <workItem from="1528664860177" duration="8185000" />
+      <workItem from="1529084600163" duration="1914000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="46734000" />
+    <option name="totallyTimeSpent" value="48928000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info id="DB Browser" />
-      <window_info anchor="bottom" id="DB Execution Console" />
+      <window_info id="DB Browser" order="2" />
+      <window_info anchor="bottom" id="DB Execution Console" order="7" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
-      <window_info id="Project Explorer" />
-      <window_info id="Job Explorer" />
+      <window_info id="Project Explorer" order="2" />
+      <window_info id="Job Explorer" order="2" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Console" />
-      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.32900944" />
+      <window_info anchor="bottom" id="Console" order="7" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
@@ -268,6 +240,7 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.32900944" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -277,6 +250,69 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/public/static_html/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="14" column="44" selection-start-line="14" selection-start-column="44" selection-end-line="14" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/stylesheets/mainComponents.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/javascript/leaderboard.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/javascript/top10.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="840">
+          <caret line="42" column="11" lean-forward="true" selection-start-line="42" selection-start-column="11" selection-end-line="42" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/static_html/leaderboard.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="14" column="40" selection-start-line="14" selection-start-column="40" selection-end-line="14" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/javascript/ajax.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="580">
+          <caret line="29" column="6" lean-forward="true" selection-start-line="29" selection-start-column="6" selection-end-line="29" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/static_html/Volleydisc.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1740">
+          <caret line="87" column="83" selection-start-line="87" selection-start-column="83" selection-end-line="87" selection-end-column="83" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/static_html/top10.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="15" lean-forward="true" selection-start-column="15" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2000">
+          <caret line="100" column="47" selection-start-line="100" selection-start-column="47" selection-end-line="100" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/public/static_html/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="860">
@@ -352,13 +388,6 @@
     <entry file="file://$PROJECT_DIR$/package-lock.json">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="503">
-          <caret line="94" column="7" selection-start-line="94" selection-start-column="7" selection-end-line="94" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/migrations/001-initial-schema.sql" />
     <entry file="file://$PROJECT_DIR$/api/database.js" />
     <entry file="file://$PROJECT_DIR$/server.js">
@@ -368,41 +397,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.env" />
-    <entry file="file://$PROJECT_DIR$/public/static_html/leaderboard.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="14" column="40" selection-start-line="14" selection-start-column="40" selection-end-line="14" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/static_html/top10.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-898">
-          <caret column="15" lean-forward="true" selection-start-column="15" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/javascript/top10.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="402">
-          <caret line="42" column="11" lean-forward="true" selection-start-line="42" selection-start-column="11" selection-end-line="42" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/javascript/ajax.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="580">
-          <caret line="29" column="6" lean-forward="true" selection-start-line="29" selection-start-column="6" selection-end-line="29" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/static_html/Volleydisc.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
+        <state relative-caret-position="1740">
           <caret line="87" column="83" selection-start-line="87" selection-start-column="83" selection-end-line="87" selection-end-column="83" />
         </state>
       </provider>
@@ -414,24 +414,73 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/stylesheets/mainComponents.css">
+    <entry file="file://$PROJECT_DIR$/public/static_html/leaderboard.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        <state relative-caret-position="-217">
+          <caret line="14" column="40" selection-start-line="14" selection-start-column="40" selection-end-line="14" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/static_html/top10.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="767">
+          <caret line="44" column="24" selection-start-line="44" selection-start-column="24" selection-end-line="44" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/javascript/top10.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="9" column="25" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="25" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/javascript/leaderboard.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="14" selection-start-line="14" selection-end-line="14" />
+        <state relative-caret-position="300">
+          <caret line="15" column="8" lean-forward="true" selection-start-line="15" selection-start-column="8" selection-end-line="16" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/stylesheets/mainComponents.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="13" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="858">
+          <caret line="94" column="7" selection-start-line="94" selection-start-column="7" selection-end-line="94" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.env">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="28" selection-start-column="28" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="15" column="24" lean-forward="true" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="100" column="27" selection-start-line="100" selection-start-column="27" selection-end-line="100" selection-end-column="27" />
+        <state relative-caret-position="561">
+          <caret line="103" column="36" selection-start-line="103" selection-start-column="36" selection-end-line="103" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/javascript/ajax.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="461">
+          <caret line="27" column="11" selection-start-line="27" selection-start-column="11" selection-end-line="27" selection-end-column="11" />
         </state>
       </provider>
     </entry>

@@ -19,13 +19,14 @@ function addToTable(players) {
         tdArray[2].appendChild(document.createTextNode(player.last_name));
         tdArray[3].appendChild(document.createTextNode(player.name));
         tdArray[4].appendChild(document.createTextNode(player.par));
-        tdArray[5].appendChild(document.createTextNode(player.avg));
+        tdArray[5].appendChild(document.createTextNode(Math.round(player.avg * 10) / 10));
 
+
+        let sum = Math.round((player.avg - player.par) * 10) / 10;
         if (player.avg - player.par >= 0) {
-            console.log("FAEN");
-            tdArray[6].appendChild(document.createTextNode('+' + (player.avg - player.par)));
+            tdArray[6].appendChild(document.createTextNode('+' + (sum)));
         } else {
-            tdArray[6].appendChild(document.createTextNode(player.avg - player.par));
+            tdArray[6].appendChild(document.createTextNode(sum));
         }
 
         let tr = document.createElement('tr');
