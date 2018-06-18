@@ -1,5 +1,3 @@
-
-
 .indexDiv {
     height: 500px;
 }
@@ -18,10 +16,16 @@
 .tableHeader {
     margin-bottom: 20px;
     margin-top: 20px;
+    color: #333A40;
 }
 
 td, th {
-    border: 1px !important;
+    border: 0 !important;
+}
+
+th {
+    background-color: #FAFAFA !important;
+    color: #333A40 !important;
 }
 
 @media only screen and (max-width: 900px) {
