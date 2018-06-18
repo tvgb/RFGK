@@ -1,6 +1,4 @@
-.navbar {
-    margin-bottom: 20px;
-}
+
 
 .indexDiv {
     height: 500px;
@@ -10,6 +8,16 @@
     position: relative;
     top: 50%;
     transform: translateY(-50%);
+}
+
+.tableInfo {
+    font-size: small;
+    color: #4e555b;
+}
+
+.tableHeader {
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 
