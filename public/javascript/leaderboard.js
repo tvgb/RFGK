@@ -35,6 +35,18 @@ function addToTable(players) {
             tr.appendChild(td)
         });
 
+        //TO SET COLORS TO THE TABLE ROWS
+        let red = 255;
+        let green = 211;
+        let blue = 50;
+
+        if (sum > 0) {
+            green -= sum * 10;
+        } else if (sum < 0) {
+            red += sum * 20;
+        }
+        tr.style.backgroundColor = 'rgba('+red+', '+green+', '+blue+', 0.2)';
+
         trArray.push(tr);
     });
 
