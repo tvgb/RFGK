@@ -21,6 +21,14 @@ function addToTable(rounds) {
         tdArray[5].appendChild(document.createTextNode(round.par));
         tdArray[6].appendChild(document.createTextNode(round.number_of_throws));
 
+
+        //Hiding first name, course name, date and number of throws on mobile.
+        tdArray[1].classList.add('hide-on-mobile');
+        tdArray[3].classList.add('hide-on-mobile');
+        tdArray[4].classList.add('hide-on-mobile');
+        tdArray[6].classList.add('hide-on-mobile');
+
+
         let sum = round.number_of_throws - round.par;
 
         if (sum>= 0) {

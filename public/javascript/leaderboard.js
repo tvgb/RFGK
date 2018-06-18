@@ -21,6 +21,11 @@ function addToTable(players) {
         tdArray[4].appendChild(document.createTextNode(player.par));
         tdArray[5].appendChild(document.createTextNode(Math.round(player.avg * 10) / 10));
 
+        //Hiding first name, course name and average number of throws on mobile.
+        tdArray[1].classList.add('hide-on-mobile');
+        tdArray[3].classList.add('hide-on-mobile');
+        tdArray[5].classList.add('hide-on-mobile');
+
 
         let sum = Math.round((player.avg - player.par) * 10) / 10;
         if (player.avg - player.par >= 0) {
