@@ -20,6 +20,9 @@
     margin-top: 20px;
 }
 
+td, th {
+    border: 1px !important;
+}
 
 @media only screen and (max-width: 900px) {
     .hide-on-mobile {
