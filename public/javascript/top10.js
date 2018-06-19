@@ -29,7 +29,7 @@ function addToTable(rounds) {
         tdArray[6].classList.add('hide-on-mobile');
 
 
-        let sum = round.number_of_throws - round.par - 8;
+        let sum = round.number_of_throws - round.par;
 
         if (sum>= 0) {
             tdArray[7].appendChild(document.createTextNode('+' + (sum)));
