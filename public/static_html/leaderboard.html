@@ -13,8 +13,8 @@
 
 <nav class="navbar navbar-expand-md bg-dark navbar-dark">
     <!-- Brand -->
-    <a class="d-md-none navbar-brand" href="/top10">Ledertavle</a>
-    <a class="hide-on-mobile navbar-brand" href="/top10">Rønvik Frisbeegolf</a>
+    <a class="d-md-none navbar-brand" href="/">Ledertavle</a>
+    <a class="hide-on-mobile navbar-brand" href="/">Rønvik Frisbeegolf</a>
 
     <!-- Toggler/collapsibe Button -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -25,6 +25,9 @@
     <div class="collapse navbar-collapse " id="collapsibleNavbar">
         <ul class="nav navbar-nav ml-auto">
             <li class="nav-item">
+                <a class="nav-link" href="/">Siste</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="/top10">Top 10</a>
             </li>
             <li class="nav-item">
@@ -32,6 +35,12 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/Volleydisc">Volleydisc</a>
+            </li>
+            <li id="adminTab" class="nav-item" style="display: none">
+                <a class="nav-link" href="/Admin">Admin</a>
+            </li>
+            <li class="nav-item">
+                <a id="loginNavLinkId" class="nav-link" data-toggle="modal" data-target="#loginModal">Login</a>
             </li>
         </ul>
     </div>
@@ -59,11 +68,14 @@
     <p class="tableInfo text text-center">En ledertavle basert på laveste gjennomsnitt.</p>
 </div>
 
+<!-- modal for login screen -->
+<div id="modalDiv"></div>
 
+</body>
 <script src="static/javascript/jquery-3.3.1.min.js"></script>
 <script src="static/javascript/bootstrap.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="static/javascript/ajax.js"></script>
 <script src="static/javascript/leaderboard.js"></script>
-</body>
+<script src="static/javascript/login.js"></script>
 </html>

@@ -1,17 +1,39 @@
+//package imports
 const express = require('express');
 const path = require('path');
-const mysql = require('mysql');
-const config = require('./config');
+const bodyParser = require('body-parser');
 
+//route imports
+const roundRoutes = require('./api/routes/rounds');
+const playerRoutes = require('./api/routes/players');
+const courseRoutes = require('./api/routes/course');
 
 const app = express();
 
 
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+/*
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', '*');
+
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods', 'PUT', 'POST', 'GET', 'DELETE');
+        return res.status(200).json({});
+    }
+});
+*/
+
 app.use('/static', express.static(path.join(__dirname, 'public')));
+
+app.use('/rounds', roundRoutes);
+app.use('/players', playerRoutes);
+app.use('/courses', courseRoutes);
 
 
 app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + '/public/static_html/top10.html'));
+    res.sendFile(path.join(__dirname + '/public/static_html/index.html'));
 });
 
 app.get('/Volleydisc', (req, res, next) => {
@@ -26,85 +48,23 @@ app.get('/leaderboard', (req, res, next) => {
     res.sendFile(path.join(__dirname + '/public/static_html/leaderboard.html'));
 });
 
+app.get('/admin', (req, res, next) => {
+    res.sendFile(path.join(__dirname + '/public/static_html/admin.html'));
+});
 
-app.get('/players', (req, res, next) => {
-    const query = 'SELECT * FROM Player;';
-    const connection = getConnection();
+app.use((req, res, next) => {
+   const error = new Error('Not found');
+   error.status = 404;
+   next(error);
+});
 
-    connection.query(query, (err, rows, fields) => {
-       if (err) {
-           console.log("Failed getting all players: " + err)
-           res.sendStatus(500);
-           return;
+app.use((error, req, res, next) => {
+   res.status(error.status || 500);
+   res.json({
+       error: {
+           message: error.message
        }
-
-        res.json(rows);
-    });
+   })
 });
-
-app.get('/player/:id', (req, res, next) => {
-    const player_id = req.params.id;
-    const query = 'SELECT * FROM Player WHERE id = ?;';
-    const connection = getConnection();
-
-    connection.query(query, [player_id], (err, rows, fields) => {
-        if (err) {
-            console.log("Failed getting player by id: " + err);
-            res.sendStatus(500);
-            return;
-        }
-
-        res.json(rows);
-    });
-});
-
-app.get('/rounds/:course_id', (req, res, next) => {
-    const course_id = req.params.course_id;
-    const query = 'SELECT Player.first_name, Player.last_name, Course.name, Course.par, Round.number_of_throws, Round.date FROM Round INNER JOIN Course ON Round.course_id = Course.id INNER JOIN Player ON Round.player_id = Player.id WHERE Round.course_id = ? ORDER BY number_of_throws LIMIT 10;';
-    const connection = getConnection();
-
-    connection.query(query, [course_id], (err, rows, fields) => {
-        if (err) {
-            console.log("Failed getting all rounds: " + err);
-            res.sendStatus(500);
-            return;
-        }
-
-        res.json(rows);
-    });
-});
-
-app.get('/leaderboard/:course_id', (req, res, next) => {
-   const course_id = req.params.course_id;
-   const query = 'SELECT Player.first_name, Player.last_name, Course.name, Course.par, AVG(Round.number_of_throws) AS avg\n' +
-       'FROM Round\n' +
-       'INNER JOIN Course ON Round.course_id = Course.id\n' +
-       'INNER JOIN Player ON Round.player_id = Player.id\n' +
-       'WHERE Round.course_id = 1\n' +
-       'GROUP BY player_id\n' +
-       'ORDER BY avg;';
-   const connection = getConnection();
-
-   connection.query(query, [course_id], (err, rows, fields) => {
-      if (err) {
-          console.log("Feil to get leaderbord: " + err);
-          res.sendStatus(500);
-          return;
-      }
-
-      res.json(rows);
-   });
-});
-
-function getConnection() {
-    const connection = mysql.createConnection({
-        host: config.db.host,
-        user: config.db.user,
-        password: config.db.password,
-        database: config.db.database
-    });
-
-    return connection;
-}
 
 module.exports = app;

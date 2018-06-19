@@ -1,11 +1,10 @@
-function addToTable(players) {
+function addToTable(rounds) {
 
-    let tbody = document.getElementById('leaderboardtbody');
+    let tbody = document.getElementById('roundstbody');
     let trArray = [];
     let pos = 0;
 
-    players.forEach(function (player) {
-
+    rounds.forEach(function (round) {
         let tdArray = [];
 
         for (i = 0; i < 7; i++) {
@@ -14,21 +13,24 @@ function addToTable(players) {
         }
 
         pos++;
-        tdArray[0].appendChild(document.createTextNode(pos + '.'));
-        tdArray[1].appendChild(document.createTextNode(player.first_name));
-        tdArray[2].appendChild(document.createTextNode(player.last_name));
-        tdArray[3].appendChild(document.createTextNode(player.name));
-        tdArray[4].appendChild(document.createTextNode(player.par));
-        tdArray[5].appendChild(document.createTextNode(Math.round(player.avg * 10) / 10));
+        tdArray[0].appendChild(document.createTextNode(round.first_name));
+        tdArray[1].appendChild(document.createTextNode(round.last_name));
+        tdArray[2].appendChild(document.createTextNode(round.name));
+        tdArray[3].appendChild(document.createTextNode(round.date.substring(0, 10)));
+        tdArray[4].appendChild(document.createTextNode(round.par));
+        tdArray[5].appendChild(document.createTextNode(round.number_of_throws));
 
-        //Hiding first name, course name and average number of throws on mobile.
-        tdArray[1].classList.add('hide-on-mobile');
-        tdArray[3].classList.add('hide-on-mobile');
+
+        //Hiding first name, course name, date and number of throws on mobile.
+        tdArray[0].classList.add('hide-on-mobile');
+        tdArray[2].classList.add('hide-on-mobile');
+        tdArray[4].classList.add('hide-on-mobile');
         tdArray[5].classList.add('hide-on-mobile');
 
 
-        let sum = Math.round((player.avg - player.par) * 10) / 10;
-        if (player.avg - player.par >= 0) {
+        let sum = round.number_of_throws - round.par;
+
+        if (sum>= 0) {
             tdArray[6].appendChild(document.createTextNode('+' + (sum)));
         } else {
             tdArray[6].appendChild(document.createTextNode(sum));
@@ -55,7 +57,6 @@ function addToTable(players) {
         }
 
         tr.style.backgroundColor = 'rgba('+red+', '+green+', '+blue+', '+alpha+')';
-
         trArray.push(tr);
     });
 
@@ -65,4 +66,4 @@ function addToTable(players) {
 
 }
 
-getLeaderboard(addToTable, 1);
+getRounds(addToTable, 1);

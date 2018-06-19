@@ -29,7 +29,7 @@ function addToTable(rounds) {
         tdArray[6].classList.add('hide-on-mobile');
 
 
-        let sum = round.number_of_throws - round.par;
+        let sum = round.number_of_throws - round.par - 8;
 
         if (sum>= 0) {
             tdArray[7].appendChild(document.createTextNode('+' + (sum)));
@@ -45,15 +45,19 @@ function addToTable(rounds) {
 
         //TO SET COLORS TO THE TABLE ROWS
         let red = 255;
-        let green = 211;
-        let blue = 50;
+        let green = 255;
+        let blue = 61;
+        let alpha = 0.1;
 
         if (sum > 0) {
-            green -= sum * 10;
+            green -= sum * 15;
+            alpha += sum * 0.02;
         } else if (sum < 0) {
-            red += sum * 20;
+            red = 50;
+            alpha -= sum * 0.08;
         }
-        tr.style.backgroundColor = 'rgba('+red+', '+green+', '+blue+', 0.2)';
+
+        tr.style.backgroundColor = 'rgba('+red+', '+green+', '+blue+', '+alpha+')';
         trArray.push(tr);
     });
 
@@ -63,4 +67,4 @@ function addToTable(rounds) {
 
 }
 
-getRounds(addToTable, 1);
+getTop10Rounds(addToTable, 1);
