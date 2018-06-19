@@ -8,7 +8,6 @@ $("#loginNavLinkId").click(function () {
 $("body").on('click', '#loginButton', function(){
     let email = $("#email").val();
     let password = $("#password").val();
-    console.log(email, password);
 
     if (email !== "" && password !== "") {
         login(preformLogin, email, password);
@@ -22,7 +21,6 @@ function preformLogin(data) {
         window.sessionStorage.setItem('token', data.token);
         $("#adminTab").show();
         $('#loginModal').modal('toggle');
-        console.log("hiding");
     } else {
         $("#wrongPwOrEmailAlert").show();
     }

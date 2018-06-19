@@ -17,7 +17,7 @@ function addToTable(rounds) {
         tdArray[1].appendChild(document.createTextNode(round.first_name));
         tdArray[2].appendChild(document.createTextNode(round.last_name));
         tdArray[3].appendChild(document.createTextNode(round.name));
-        tdArray[4].appendChild(document.createTextNode(round.date.substring(0, 10)));
+        tdArray[4].appendChild(document.createTextNode(appendDate(round.date)));
         tdArray[5].appendChild(document.createTextNode(round.par));
         tdArray[6].appendChild(document.createTextNode(round.number_of_throws));
 
@@ -65,6 +65,38 @@ function addToTable(rounds) {
         tbody.appendChild(tr);
     });
 
+}
+
+//Used to gives dates names like "one day ago" and "one week ago" instead of just a date
+function appendDate(date) {
+    let daysSinceArray = ['I dag', 'I går', '2 dager siden',
+        '3 dager siden', '4 dager siden',
+        '5 dager siden', '6 dager siden', '1 uke siden'];
+
+    let oneDay = 24*60*60*1000; // hours * minutes * seconds * milliseconds
+    let firstDate = date.split("-");
+    firstDate = new Date(firstDate[2], firstDate[1] - 1, firstDate[0]);
+    let secondDate = getTodaysDate().split("-");
+    secondDate = new Date(secondDate[2], secondDate[1] - 1, secondDate[0]);
+    let diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+
+    if (diffDays <= 7) {
+        return daysSinceArray[diffDays];
+    } else {
+        return date;
+    }
+}
+
+function getTodaysDate() {
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth()+1; //January is 0!
+    let yyyy = today.getFullYear();
+    if(dd<10) {dd = '0'+dd}
+    if(mm<10) {mm = '0'+mm}
+    today = dd + '-' + mm + '-' + yyyy;
+
+    return today;
 }
 
 getTop10Rounds(addToTable, 1);
