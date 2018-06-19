@@ -51,6 +51,8 @@ function addRoundResponse(data) {
         $("#newRoundAddedAlert").fadeTo(2000, 500).fadeOut(500, function(){
             $("#success-alert").fadeOut(500);
         });
+
+        $("#roundSum").val(0);
     }
 }
 
