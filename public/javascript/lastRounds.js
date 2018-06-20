@@ -45,14 +45,15 @@ function addToTable(rounds) {
         let red = 255;
         let green = 255;
         let blue = 61;
-        let alpha = 0.1;
+        let alpha = 0.2;
 
-        if (sum > 0) {
+        if (sum > 5) {
             green -= sum * 15;
             alpha += sum * 0.02;
-        } else if (sum < 0) {
+        } else if (sum < 6) {
             red = 50;
-            alpha -= sum * 0.08;
+            alpha = 0.3;
+            alpha -= (sum - 5) * 0.05;
         }
 
         tr.style.backgroundColor = 'rgba('+red+', '+green+', '+blue+', '+alpha+')';
