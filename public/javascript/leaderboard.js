@@ -47,6 +47,7 @@ function addToTable(players) {
         let alpha = 0.4;
 
         if (sum < 6) {
+            alpha = 0.3;
             red = 109;
             green = 202;
             blue = 109;
