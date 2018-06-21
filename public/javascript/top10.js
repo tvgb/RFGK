@@ -45,18 +45,25 @@ function addToTable(rounds) {
 
         //TO SET COLORS TO THE TABLE ROWS
         let red = 255;
-        let green = 255;
-        let blue = 61;
-        let alpha = 0.2;
+        let green = 193;
+        let blue = 111;
+        let alpha = 0.3;
 
-        if (sum > 5) {
-            green -= sum * 15;
-            alpha += sum * 0.02;
+        if (sum > 6) {
+            red -= (sum - 5) * 5;
+            green -= (sum - 5) * 17;
+            blue -= (sum - 5) * 8;
+
         } else if (sum < 6) {
-            red = 50;
-            alpha = 0.3;
-            alpha -= (sum - 5) * 0.05;
+            red = 109;
+            green = 202;
+            blue = 109;
+
+            red += (sum - 5) * 15;
+            blue += (sum - 5) * 15;
+            green += (sum - 5) * 15;
         }
+
 
         tr.style.backgroundColor = 'rgba('+red+', '+green+', '+blue+', '+alpha+')';
         trArray.push(tr);
