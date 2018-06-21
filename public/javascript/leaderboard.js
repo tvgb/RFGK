@@ -44,14 +44,9 @@ function addToTable(players) {
         let red = 255;
         let green = 193;
         let blue = 111;
-        let alpha = 0.3;
+        let alpha = 0.4;
 
-        if (sum > 6) {
-            red -= (sum - 5) * 5;
-            green -= (sum - 5) * 17;
-            blue -= (sum - 5) * 8;
-
-        } else if (sum < 6) {
+        if (sum < 6) {
             red = 109;
             green = 202;
             blue = 109;
@@ -59,6 +54,17 @@ function addToTable(players) {
             red += (sum - 5) * 15;
             blue += (sum - 5) * 15;
             green += (sum - 5) * 15;
+
+        } else if (sum > 6) {
+            red = 255;
+            green = 193;
+            blue = 111;
+
+            green -= (sum - 6) * 20;
+            blue -= (sum - 6) * 20;
+
+            alpha += (sum - 6) * 0.01;
+            console.log(sum, red, green, blue, alpha)
         }
 
         tr.style.backgroundColor = 'rgba('+red+', '+green+', '+blue+', '+alpha+')';

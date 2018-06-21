@@ -47,14 +47,9 @@ function addToTable(rounds) {
         let red = 255;
         let green = 193;
         let blue = 111;
-        let alpha = 0.3;
+        let alpha = 0.4;
 
-        if (sum > 6) {
-            red -= (sum - 5) * 5;
-            green -= (sum - 5) * 17;
-            blue -= (sum - 5) * 8;
-
-        } else if (sum < 6) {
+        if (sum < 6) {
             red = 109;
             green = 202;
             blue = 109;
@@ -62,6 +57,17 @@ function addToTable(rounds) {
             red += (sum - 5) * 15;
             blue += (sum - 5) * 15;
             green += (sum - 5) * 15;
+
+        } else if (sum > 6) {
+            red = 255;
+            green = 193;
+            blue = 111;
+
+            green -= (sum - 6) * 20;
+            blue -= (sum - 6) * 20;
+
+            alpha += (sum - 6) * 0.01;
+            console.log(sum, red, green, blue, alpha)
         }
 
 
@@ -77,9 +83,9 @@ function addToTable(rounds) {
 
 //Used to gives dates names like "one day ago" and "one week ago" instead of just a date
 function appendDate(date) {
-    let daysSinceArray = ['I dag', 'I går', '2 dager siden',
-        '3 dager siden', '4 dager siden',
-        '5 dager siden', '6 dager siden', '1 uke siden'];
+    let daysSinceArray = ['I dag', 'I går', '2 dager',
+        '3 dager', '4 dager',
+        '5 dager', '6 dager', '1 uke'];
 
     let oneDay = 24*60*60*1000; // hours * minutes * seconds * milliseconds
     let firstDate = date.split("-");
