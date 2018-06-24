@@ -64,6 +64,6 @@ function getTodaysDate() {
     let yyyy = today.getFullYear();
     if(dd<10) {dd = '0'+dd}
     if(mm<10) {mm = '0'+mm}
-    today =  dd + '-' + mm + '-' + yyyy;
+    today = yyyy + '-' + mm + '-' + dd;
     return today;
 }

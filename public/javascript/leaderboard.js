@@ -65,7 +65,6 @@ function addToTable(players) {
             blue -= (sum - 6) * 20;
 
             alpha += (sum - 6) * 0.01;
-            console.log(sum, red, green, blue, alpha)
         }
 
         tr.style.backgroundColor = 'rgba('+red+', '+green+', '+blue+', '+alpha+')';
