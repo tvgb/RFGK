@@ -48,8 +48,18 @@ function getTop10Rounds(func, course_id) {
         });
 }
 
-function getLeaderboard(func, course_id) {
-    axios.get('players/leaderboard/' + course_id)
+function getLeaderboardAvg(func, course_id) {
+    axios.get('players/leaderboard/avg/' + course_id)
+        .then(function (response) {
+            func(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
+
+function getLeaderboardBest(func, course_id) {
+    axios.get('players/leaderboard/best/' + course_id)
         .then(function (response) {
             func(response.data);
         })

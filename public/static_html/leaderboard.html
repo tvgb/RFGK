@@ -47,9 +47,10 @@
 </nav>
 
 <div class="table-container container">
-    <h4 class="hide-on-mobile tableHeader text text-center">Ledertavle</h4>
+    <h4 class="hide-on-mobile tableHeader text text-center">Ledertavler</h4>
+    <br>
     <div class="table-responsive">
-        <table id="leaderboardtable" class="table">
+        <table id="bestLeaderboardtable" class="table">
             <thead class="tableHead">
             <tr>
                 <th>Pos.</th>
@@ -61,12 +62,35 @@
                 <th>Avg. sum</th>
             </tr>
             </thead>
-            <tbody id="leaderboardtbody">
+            <tbody id="bestLeaderboardtbody">
+            </tbody>
+        </table>
+    </div>
+    <p class="tableInfo text text-center">En ledertavle basert på beste runde.</p>
+</div>
+<br><br>
+
+<div class="table-container container">
+    <div class="table-responsive">
+        <table id="avgLeaderboardtable" class="table">
+            <thead class="tableHead">
+            <tr>
+                <th>Pos.</th>
+                <th class="hide-on-mobile">Fornavn</th>
+                <th>Etternavn</th>
+                <th class="hide-on-mobile">Bane</th>
+                <th>Par</th>
+                <th class="hide-on-mobile">Avg. kast</th>
+                <th>Avg. sum</th>
+            </tr>
+            </thead>
+            <tbody id="avgLeaderboardtbody">
             </tbody>
         </table>
     </div>
     <p class="tableInfo text text-center">En ledertavle basert på laveste gjennomsnitt.</p>
 </div>
+
 
 <!-- modal for login screen -->
 <div id="modalDiv"></div>

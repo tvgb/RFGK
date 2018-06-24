@@ -27,6 +27,7 @@ router.get('/top10/:course_id/', (req, res, next) =>  {
     });
 });
 
+
 router.get('/:course_id', (req, res, next) =>  {
     const course_id = req.params.course_id;
     const query = 'SELECT Player.first_name, Player.last_name, Course.name, Course.par, Round.number_of_throws, DATE_FORMAT(Round.date, "%d-%m-%Y") AS date\n' +

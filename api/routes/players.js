@@ -40,7 +40,7 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
-router.get('/leaderboard/:course_id', (req, res, next) => {
+router.get('/leaderboard/avg/:course_id', (req, res, next) => {
     const course_id = req.params.course_id;
     const query = 'SELECT Player.first_name, Player.last_name, Course.name, Course.par, AVG(Round.number_of_throws) AS avg\n' +
         'FROM Round\n' +
@@ -49,6 +49,30 @@ router.get('/leaderboard/:course_id', (req, res, next) => {
         'WHERE Round.course_id = 1\n' +
         'GROUP BY player_id\n' +
         'ORDER BY avg;';
+    const connection = getConnection();
+
+    connection.query(query, [course_id], (err, rows, fields) => {
+        if (err) {
+            console.log("Failed to get leaderbord: " + err);
+            res.sendStatus(500);
+            return;
+        }
+
+        res.json(rows);
+    });
+});
+
+router.get('/leaderboard/best/:course_id', (req, res, next) => {
+    const course_id = req.params.course_id;
+    const query = "SELECT Player.first_name, Player.last_name, Course.name, Course.par,\n" +
+        "  DATE_FORMAT(MAX(Round.date), '%d-%m-%Y') AS date, MIN(Round.number_of_throws) AS throws\n" +
+        "FROM Round\n" +
+        "  INNER JOIN Course ON Round.course_id = Course.id\n" +
+        "  INNER JOIN Player ON Round.player_id = Player.id\n" +
+        "WHERE Round.course_id = 1\n" +
+        "GROUP BY\n" +
+        "  Round.player_id\n" +
+        "ORDER BY throws;";
     const connection = getConnection();
 
     connection.query(query, [course_id], (err, rows, fields) => {
