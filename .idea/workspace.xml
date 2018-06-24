@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a1f25aa-5e01-4b9b-b5a3-e182d75017b4" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/api/routes/players.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/routes/players.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/routes/rounds.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/routes/rounds.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/javascript/ajax.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/javascript/ajax.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/javascript/leaderboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/javascript/leaderboard.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/static_html/leaderboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/static_html/leaderboard.html" afterDir="false" />
     </list>
@@ -73,26 +71,26 @@
       <file leaf-file-name="lastRounds.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/javascript/lastRounds.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="592">
-              <caret line="68" selection-start-line="68" selection-end-line="68" />
+            <state relative-caret-position="488">
+              <caret line="25" column="51" lean-forward="true" selection-start-line="25" selection-start-column="51" selection-end-line="25" selection-end-column="51" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="leaderboard.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="leaderboard.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/javascript/leaderboard.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3">
-              <caret line="69" column="76" selection-start-line="69" selection-start-column="76" selection-end-line="69" selection-end-column="76" />
+            <state relative-caret-position="465">
+              <caret line="110" column="17" selection-start-line="110" selection-start-column="17" selection-end-line="110" selection-end-column="17" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="leaderboard.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="leaderboard.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/static_html/leaderboard.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="414">
-              <caret line="50" column="8" selection-start-line="50" selection-start-column="8" selection-end-line="50" selection-end-column="8" />
+            <state relative-caret-position="474">
+              <caret line="61" column="44" selection-start-line="61" selection-start-column="44" selection-end-line="61" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -148,8 +146,8 @@
         <option value="$PROJECT_DIR$/api/routes/rounds.js" />
         <option value="$PROJECT_DIR$/api/routes/players.js" />
         <option value="$PROJECT_DIR$/public/javascript/ajax.js" />
-        <option value="$PROJECT_DIR$/public/javascript/leaderboard.js" />
         <option value="$PROJECT_DIR$/public/static_html/leaderboard.html" />
+        <option value="$PROJECT_DIR$/public/javascript/leaderboard.js" />
       </list>
     </option>
   </component>
@@ -265,12 +263,12 @@
       <workItem from="1529357052908" duration="23971000" />
       <workItem from="1529438504344" duration="7622000" />
       <workItem from="1529446658455" duration="3034000" />
-      <workItem from="1529489332152" duration="8619000" />
+      <workItem from="1529489332152" duration="9005000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="100170000" />
+    <option name="totallyTimeSpent" value="100556000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -608,13 +606,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/javascript/lastRounds.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="592">
-          <caret line="68" selection-start-line="68" selection-end-line="68" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/api/routes/players.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="487">
@@ -629,6 +620,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/public/static_html/leaderboard.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="474">
+          <caret line="61" column="44" selection-start-line="61" selection-start-column="44" selection-end-line="61" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/public/javascript/addRounds.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="939">
@@ -636,17 +634,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/javascript/leaderboard.js">
+    <entry file="file://$PROJECT_DIR$/public/javascript/lastRounds.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3">
-          <caret line="69" column="76" selection-start-line="69" selection-start-column="76" selection-end-line="69" selection-end-column="76" />
+        <state relative-caret-position="488">
+          <caret line="25" column="51" lean-forward="true" selection-start-line="25" selection-start-column="51" selection-end-line="25" selection-end-column="51" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/static_html/leaderboard.html">
+    <entry file="file://$PROJECT_DIR$/public/javascript/leaderboard.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="50" column="8" selection-start-line="50" selection-start-column="8" selection-end-line="50" selection-end-column="8" />
+        <state relative-caret-position="465">
+          <caret line="110" column="17" selection-start-line="110" selection-start-column="17" selection-end-line="110" selection-end-column="17" />
         </state>
       </provider>
     </entry>

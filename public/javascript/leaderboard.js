@@ -108,6 +108,7 @@ function addBestToTable(players) {
         //Hiding first name, course name and average number of throws on mobile.
         tdArray[1].classList.add('hide-on-mobile');
         tdArray[3].classList.add('hide-on-mobile');
+        tdArray[4].classList.add('hide-on-mobile');
         tdArray[6].classList.add('hide-on-mobile');
 
 
