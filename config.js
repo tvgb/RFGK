@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const config = {
     app: {
-        port: 3000
+        port: 443
     },
     db: {
         host: '158.38.166.221',
