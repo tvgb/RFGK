@@ -10,7 +10,6 @@ const courseRoutes = require('./api/routes/course');
 
 const app = express();
 
-
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 /*

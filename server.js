@@ -14,20 +14,16 @@ const credentials = {
 	ca: ca
 };
 
-const portHTTP = process.env.PORT || 3000;
-const portHTTPS = 443;
+//const portHTTP = process.env.PORT || 3000;
+const portHTTPS = 3000;
 
-server.listen(port, () => {
-    console.log("Server listening on", port);
-});
-
-// Starting both http & https servers
-const httpServer = http.createServer(app);
+//Starting both http & https servers
+//const httpServer = http.createServer(app);
 const httpsServer = https.createServer(credentials, app);
 
-httpServer.listen(portHTTP, () => {
-	console.log('HTTP Server running on port', portHTTP);
-});
+//httpServer.listen(portHTTP, () => {
+//	console.log('HTTP Server running on port', portHTTP);
+//});
 
 httpsServer.listen(portHTTPS, () => {
 	console.log('HTTPS Server running on port 443', portHTTPS);
