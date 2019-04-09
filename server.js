@@ -14,17 +14,11 @@ const credentials = {
 	ca: ca
 };
 
-//const portHTTP = process.env.PORT || 3000;
-const portHTTPS = 3000;
+// Running on port 3000 because NGINX is listening on port 3000
+const port = 3000;
 
-//Starting both http & https servers
-//const httpServer = http.createServer(app);
 const httpsServer = https.createServer(credentials, app);
 
-//httpServer.listen(portHTTP, () => {
-//	console.log('HTTP Server running on port', portHTTP);
-//});
-
-httpsServer.listen(portHTTPS, () => {
-	console.log('HTTPS Server running on port 443', portHTTPS);
+httpsServer.listen(port, () => {
+	console.log('HTTPS Server running on port', port);
 });
