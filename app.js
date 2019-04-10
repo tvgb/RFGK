@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 //route imports
 const roundRoutes = require('./api/routes/rounds');
@@ -10,21 +11,10 @@ const courseRoutes = require('./api/routes/course');
 
 const app = express();
 
+app.use(cors);
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', '*');
-
-    if (req.method === 'OPTIONS') {
-        res.header('Access-Control-Allow-Methods', 'PUT', 'POST', 'GET', 'DELETE');
-        return res.status(200).json({});
-	}
-	
-	next();
-});
-
 
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
