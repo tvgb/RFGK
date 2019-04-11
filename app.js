@@ -2,7 +2,6 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const cors = require('cors');
 
 //route imports
 const roundRoutes = require('./api/routes/rounds');
@@ -10,8 +9,6 @@ const playerRoutes = require('./api/routes/players');
 const courseRoutes = require('./api/routes/course');
 
 const app = express();
-
-app.use(cors());
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());

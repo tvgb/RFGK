@@ -3,7 +3,7 @@ const router = express.Router();
 const mysql = require('mysql');
 const config = require('../../config');
 const checkAuth = require('../middleware/check-auth');
-const cors = require('cors');
+
 
 router.get('/top10/:course_id/', (req, res, next) =>  {
     const course_id = req.params.course_id;
@@ -26,8 +26,7 @@ router.get('/top10/:course_id/', (req, res, next) =>  {
     });
 });
 
-
-router.get('/:course_id', cors(), (req, res, next) =>  {
+router.get('/:course_id', (req, res, next) =>  {
     const course_id = req.params.course_id;
     const query = 'SELECT Player.first_name, Player.last_name, Course.name, Course.par, Round.number_of_throws, DATE_FORMAT(Round.date, "%d-%m-%Y") AS date\n' +
         'FROM Round\n' +
