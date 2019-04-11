@@ -13,19 +13,6 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', '*');
-
-    if (req.method === 'OPTIONS') {
-        res.header('Access-Control-Allow-Methods', 'PUT', 'POST', 'GET', 'DELETE');
-        return res.status(200).json({});
-	}
-	
-	next();
-});
-
-
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
 app.use('/rounds', roundRoutes);
