@@ -1,18 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('mysql');
+const pool = require('../database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const config = require('../../config');
 const checkAuth = require('../middleware/check-auth');
 
 
 
 
 router.get('/', (req, res, next) =>  {
-    const query = 'SELECT * FROM Player;';
-    const connection = getConnection();
-    connection.query(query, (err, rows, fields) => {
+	const query = 'SELECT * FROM Player;';
+	
+    pool.query(query, (err, rows, fields) => {
         if (err) {
             console.log("Failed getting all players: " + err)
             res.sendStatus(500);
@@ -27,9 +26,8 @@ router.get('/', (req, res, next) =>  {
 router.get('/:id', (req, res, next) => {
     const player_id = req.params.id;
     const query = 'SELECT * FROM Player WHERE id = ?;';
-    const connection = getConnection();
 
-    connection.query(query, [player_id], (err, rows, fields) => {
+    pool.query(query, [player_id], (err, rows, fields) => {
         if (err) {
             console.log("Failed getting player by id: " + err);
             res.sendStatus(500);
@@ -42,16 +40,15 @@ router.get('/:id', (req, res, next) => {
 
 router.get('/leaderboard/avg/:course_id', (req, res, next) => {
     const course_id = req.params.course_id;
-    const query = 'SELECT Player.first_name, Player.last_name, Course.name, Course.par, AVG(Round.number_of_throws) AS avg\n' +
-        'FROM Round\n' +
-        'INNER JOIN Course ON Round.course_id = Course.id\n' +
-        'INNER JOIN Player ON Round.player_id = Player.id\n' +
-        'WHERE Round.course_id = 1\n' +
-        'GROUP BY player_id\n' +
-        'ORDER BY avg;';
-    const connection = getConnection();
+    const query =  `SELECT Player.first_name, Player.last_name, Course.name, Course.par, AVG(Round.number_of_throws) AS avg
+        			FROM Round
+        				INNER JOIN Course ON Round.course_id = Course.id
+        				INNER JOIN Player ON Round.player_id = Player.id
+        			WHERE Round.course_id = 1
+        			GROUP BY player_id
+        			ORDER BY avg;`;
 
-    connection.query(query, [course_id], (err, rows, fields) => {
+    pool.query(query, [course_id], (err, rows, fields) => {
         if (err) {
             console.log("Failed to get leaderbord: " + err);
             res.sendStatus(500);
@@ -64,18 +61,17 @@ router.get('/leaderboard/avg/:course_id', (req, res, next) => {
 
 router.get('/leaderboard/best/:course_id', (req, res, next) => {
     const course_id = req.params.course_id;
-    const query = "SELECT Player.first_name, Player.last_name, Course.name, Course.par,\n" +
-        "  DATE_FORMAT(MAX(Round.date), '%d-%m-%Y') AS date, MIN(Round.number_of_throws) AS throws\n" +
-        "FROM Round\n" +
-        "  INNER JOIN Course ON Round.course_id = Course.id\n" +
-        "  INNER JOIN Player ON Round.player_id = Player.id\n" +
-        "WHERE Round.course_id = 1\n" +
-        "GROUP BY\n" +
-        "  Round.player_id\n" +
-        "ORDER BY throws;";
-    const connection = getConnection();
+    const query =  `SELECT Player.first_name, Player.last_name, Course.name, Course.par,
+        			DATE_FORMAT(MAX(Round.date), '%d-%m-%Y') AS date, MIN(Round.number_of_throws) AS throws
+        			FROM Round
+        				INNER JOIN Course ON Round.course_id = Course.id
+        				INNER JOIN Player ON Round.player_id = Player.id
+        			WHERE Round.course_id = 1
+        			GROUP BY
+        			Round.player_id
+        			ORDER BY throws;`;
 
-    connection.query(query, [course_id], (err, rows, fields) => {
+    pool.query(query, [course_id], (err, rows, fields) => {
         if (err) {
             console.log("Failed to get leaderbord: " + err);
             res.sendStatus(500);
@@ -90,9 +86,9 @@ router.get('/leaderboard/best/:course_id', (req, res, next) => {
 router.post('/signup', (req, res, next) => {
    if (process.env.SECRET_CODE === req.body.secret_code) {
 
-       const connection = getConnection();
-       const query = "SELECT * FROM Player WHERE email = ?;";
-       connection.query(query, [req.body.email], (err, rows, fields) => {
+	   const query = "SELECT * FROM Player WHERE email = ?;";
+	   
+       pool.query(query, [req.body.email], (err, rows, fields) => {
            if (err) {
                return res.status(500).json({
                    message: 'Internal server error'
@@ -144,49 +140,50 @@ router.post('/signup', (req, res, next) => {
 });
 
 router.post('/login', (req, res, next) => {
-   const connection = getConnection();
+
    const query = "SELECT id, password FROM Player WHERE email = ?;";
-   connection.query(query, [req.body.email], (err, rows, fields) => {
-       if (err) {
-           console.log("Failed to get id and password from user " + err);
-           res.sendStatus(500);
-           return;
-       }
 
-       if (rows.length < 1) {
-           return res.status(200).json({
-               message: "Auth failed"
-           })
-       } else {
-           bcrypt.compare(req.body.password, rows[0].password, (err, result) => {
-               if (err) {
-                   return res.status(401).json({
-                       message: 'Auth failed'
-                   });
-               }
+	pool.query(query, [req.body.email], (err, rows, fields) => {
+		if (err) {
+			console.log("Failed to get id and password from user " + err);
+			res.sendStatus(500);
+			return;
+		}
 
-               if (result) {
-                   const token = jwt.sign({
-                       email: req.body.email,
-                       id: rows[0].id
-                   },
-                   process.env.JWT_KEY,
-                   {
-                       expiresIn: "1h"
-                   }
-                   );
-                   return res.status(200).json({
-                       message: "Auth successful",
-                       token: token
-                   })
-               }
+		if (rows.length < 1) {
+			return res.status(200).json({
+				message: "Auth failed"
+			})
+		} else {
+			bcrypt.compare(req.body.password, rows[0].password, (err, result) => {
+				if (err) {
+					return res.status(401).json({
+						message: 'Auth failed'
+					});
+				}
 
-               return res.status(200).json({
-                   message: "Auth failed"
-               })
-           });
-       }
-   });
+				if (result) {
+					const token = jwt.sign({
+						email: req.body.email,
+						id: rows[0].id
+					},
+					process.env.JWT_KEY,
+					{
+						expiresIn: "1h"
+					}
+					);
+					return res.status(200).json({
+						message: "Auth successful",
+						token: token
+					})
+				}
+
+				return res.status(200).json({
+					message: "Auth failed"
+				})
+			});
+		}
+	});
 });
 
 
@@ -203,7 +200,7 @@ router.put('/newpassword', checkAuth, (req, res, next) => {
             const query = "UPDATE Player\n" +
                           "SET password = ?\n" +
                           "WHERE id = ?;";
-            connection.query(query, [hash, req.userData.id], (err, row, fields) => {
+            pool.query(query, [hash, req.userData.id], (err, row, fields) => {
                 if (err) {
                     console.log("Failed to create new user: " + err);
                     res.sendStatus(500);
@@ -217,17 +214,5 @@ router.put('/newpassword', checkAuth, (req, res, next) => {
         }
     });
 });
-
-
-function getConnection() {
-    const connection = mysql.createConnection({
-        host: config.db.host,
-        user: config.db.user,
-        password: config.db.password,
-        database: config.db.database
-    });
-
-    return connection;
-}
 
 module.exports = router;
