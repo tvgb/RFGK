@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const roundRoutes = require('./api/routes/rounds');
 const playerRoutes = require('./api/routes/players');
 const courseRoutes = require('./api/routes/course');
+const scorecardRoutes = require('./api/routes/scorecard');
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use('/rounds', roundRoutes);
 app.use('/players', playerRoutes);
 app.use('/courses', courseRoutes);
+app.use('/scorecard', scorecardRoutes);
 
 
 app.get('/', function(req, res) {
