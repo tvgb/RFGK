@@ -9,7 +9,7 @@ router.get('/', (req, res, next) =>  {
     const course_id = req.params.course_id;
     const query = 'SELECT id, DATE_FORMAT(date_time, "%d-%m-%Y %T") AS date\n, created_by\n' +
         'FROM Scorecard\n' +
-        'ORDER BY date DESC;';
+        'ORDER BY Scorecard.date_time DESC;';
     const connection = getConnection();
 
     connection.query(query, (err, rows, fields) => {
