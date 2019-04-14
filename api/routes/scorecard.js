@@ -4,8 +4,9 @@ const pool = require('../database');
 
 router.get('/', (req, res, next) =>  {
 
-    const query =  `SELECT id, DATE_FORMAT(date_time, "%d-%m-%Y %T") AS date, created_by
-        			FROM Scorecard
+    const query =  `SELECT Scorecard.id, DATE_FORMAT(date_time, "%d-%m-%Y %T") AS date, Player.first_name, Player.last_name
+					FROM Scorecard
+						INNER JOIN Player ON Scorecard.created_by = Player.id
 					ORDER BY UNIX_TIMESTAMP(date_time) DESC;`;
 		
     pool.query(query, (err, rows, fields) => {
