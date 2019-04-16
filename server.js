@@ -22,3 +22,12 @@ const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(port, () => {
 	console.log('HTTPS Server running on port', port);
 });
+
+
+// const port = 3000;
+
+// const httpServer = http.createServer(app);
+
+// httpServer.listen(port, () => {
+// 	console.log('HTTP Server running on port', port);
+// });
