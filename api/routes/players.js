@@ -4,8 +4,8 @@ const pool = require('../database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('../middleware/check-auth');
-
-
+const Player = require('../../src/models/Player');
+const Scorecard = require('../../src/models/Scorecard');
 
 
 router.get('/', (req, res, next) =>  {
@@ -21,6 +21,18 @@ router.get('/', (req, res, next) =>  {
         res.json(rows);
     });
 });
+
+router.get('/test', (req, res, next) => {
+
+	// search for attributes
+	Player.findAll({ include: [{
+		model: Scorecard,
+		as: 'Scorecard'
+	}]}).then(player => {
+		// project will be the first entry of the Projects table with the title 'aProject' || null
+		res.json(player);
+	})
+})
 
 
 router.get('/:id', (req, res, next) => {

@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+let cors = require('cors')
 
 //route imports
 const roundRoutes = require('./api/routes/rounds');
@@ -9,7 +10,14 @@ const playerRoutes = require('./api/routes/players');
 const courseRoutes = require('./api/routes/course');
 const scorecardRoutes = require('./api/routes/scorecard');
 
+//Db impots
+const db = require('./src/database/connection');
+const bs = require('./src/bootstrap')();
+
 const app = express();
+
+app.use(cors());
+
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -20,7 +28,6 @@ app.use('/rounds', roundRoutes);
 app.use('/players', playerRoutes);
 app.use('/courses', courseRoutes);
 app.use('/scorecard', scorecardRoutes);
-
 
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/public/static_html/index.html'));

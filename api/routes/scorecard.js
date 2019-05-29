@@ -1,24 +1,51 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../database');
+const Scorecard = require('../../src/models/Scorecard');
+const Round = require('../../src/models/Round');
+const Player = require('../../src/models/Player');
+const Course = require('../../src/models/Course');
 
 router.get('/', (req, res, next) =>  {
 
-    const query =  `SELECT Scorecard.id, Scorecard.date_time, Player.first_name, Player.last_name
-					FROM Scorecard
-						INNER JOIN Player ON Scorecard.created_by = Player.id
-					ORDER BY UNIX_TIMESTAMP(date_time) DESC;`;
+	Scorecard.findAll({
+		attributes: ['date_time'],
+		include: [{
+			model: Round,
+				attributes: [['number_of_throws', 'throws'], 'date'],
+				include: [{
+					model: Player,
+					attributes: ['first_name', 'last_name']
+				},
+				{
+					model: Course,
+					attributes: [['name', 'course_name'], 'holes', 'par']
+				}]
+
+		},{
+			model: Player,
+			attributes: ['first_name', 'last_name']
+		}],
+		order: [['date_time', 'DESC']]
+	}).then(scorecards => {
+		res.json(scorecards);
+	})
+
+    // const query =  `SELECT Scorecard.id, Scorecard.date_time, Player.first_name, Player.last_name
+	// 				FROM Scorecard
+	// 					INNER JOIN Player ON Scorecard.created_by = Player.id
+	// 				ORDER BY UNIX_TIMESTAMP(date_time) DESC;`;
 		
-    pool.query(query, (err, rows, fields) => {
+    // pool.query(query, (err, rows, fields) => {
 
-        if (err) {
-            console.log("Failed getting all scorecards: " + err);
-			res.sendStatus(500);
-            return;
-        }
+    //     if (err) {
+    //         console.log("Failed getting all scorecards: " + err);
+	// 		res.sendStatus(500);
+    //         return;
+    //     }
 
-        res.json(rows);
-    });
+    //     res.json(rows);
+    // });
 });
 
 router.get('/:scorecard_id', (req, res, next) =>  {
