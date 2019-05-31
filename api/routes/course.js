@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../database');
-const config = require('../../config');
 const Course = require('../../src/models/Course');
 
 
-
+// Get all Courses
 router.get('/', (req, res, next) =>  {
 
 	Course.findAll()
@@ -13,38 +11,27 @@ router.get('/', (req, res, next) =>  {
 		res.json(courses);
 	})
 	.catch(err => {
-		console.log("Failed getting all courses: " + err);
+		console.log(`Failed getting all courses: ${err}`);
 		res.sendStatus(500);
 		return;
 	});
-
-
-    // const query = "SELECT * FROM Course";
-
-    // pool.query(query, (err, rows, fields) => {
-    //     if (err) {
-    //         console.log("Failed getting all courses: " + err);
-    //         res.sendStatus(500);
-    //         return;
-    //     }
-
-    //     res.json(rows);
-    // });
 });
 
+// Get course with id "course_id"
 router.get('/:course_id', (req, res, next) =>  {
-    const course_id = req.params.course_id;
-    const query = "SELECT * FROM Course WHERE id = ?";
-
-    pool.query(query, [course_id], (err, rows, fields) => {
-        if (err) {
-            console.log("Failed getting a course: " + err);
-            res.sendStatus(500);
-            return;
-        }
-
-        res.json(rows);
-    });
+	const course_id = req.params.course_id;
+	
+	Course.findOne({
+		where: {
+			id: course_id
+		}
+	}).then(course => {
+		res.json(course);
+	}).catch(err => {
+		console.log(`Failed getting course with id ${course_id}: ${err}`);
+		res.sendStatus(500);
+		return;
+	})
 });
 
 module.exports = router;
