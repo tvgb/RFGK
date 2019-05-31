@@ -1,0 +1,74 @@
+.indexDiv {
+    height: 500px;
+}
+
+#welcomeText {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.tableInfo {
+    font-size: small;
+    color: #4e555b;
+}
+
+.tableHeader {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    color: #333A40;
+}
+
+.plusMinusDiv {
+    width: 40%;
+}
+
+#plusSpan, #minusSpan {
+    width: 100%;
+    background-color: #333a40;
+    color: white;
+    font-size: 1.5em;
+}
+
+#plusSpan {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#minusSpan {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+#loginNavLinkId {
+    cursor: pointer;
+}
+
+#wrongPwOrEmailAlert {
+    margin: 0px 30px;
+}
+
+#newRoundAddedAlert {
+    margin-top: 61px;
+}
+
+td, th {
+    border: 0 !important;
+}
+
+th {
+    background-color: #FAFAFA !important;
+    color: #333A40 !important;
+}
+
+
+@media only screen and (max-width: 900px) {
+    .hide-on-mobile {
+        display: none;
+    }
+
+    .table-container {
+        padding: 0;
+    }
+}
+

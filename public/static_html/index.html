@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+    <meta name="google-site-verification" content="wn6VbVJTI2VZU-lsjTdjJQpe6OSDwv9nUJK_4FImxr8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rønvik Frisbeegolf</title>
+    <link rel="icon" type="image/png" href="static/images/favicon.png">
+    <link type="text/css" rel="stylesheet" href="static/stylesheets/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="static/stylesheets/mainComponents.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <!-- Brand -->
+    <a class="d-md-none navbar-brand" href="/">Siste</a>
+    <a class="hide-on-mobile navbar-brand" href="/">Rønvik Frisbeegolf</a>
+
+
+    <!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar links -->
+    <div class="collapse navbar-collapse " id="collapsibleNavbar">
+        <ul class="nav navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Siste</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/top10">Top 10</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/leaderboard">Ledertavle</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/Volleydisc">Volleydisc</a>
+            </li>
+            <li id="adminTab" class="nav-item" style="display: none">
+                <a class="nav-link" href="/Admin">Admin</a>
+            </li>
+            <li class="nav-item">
+                <a id="loginNavLinkId" class="nav-link">Login</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="table-container container">
+    <h4 class="hide-on-mobile tableHeader text text-center">Siste runder</h4>
+    <div class="table-responsive">
+        <table id="roundsTable" class="table">
+            <thead class="thead-light">
+            <tr>
+                <th class="hide-on-mobile">Fornavn</th>
+                <th>Etternavn</th>
+                <th class="hide-on-mobile">Bane</th>
+                <th>Dato</th>
+                <th>Par</th>
+                <th class="hide-on-mobile">Antall Kast</th>
+                <th>Sum</th>
+            </tr>
+            </thead>
+            <tbody id="roundstbody">
+            </tbody>
+        </table>
+    </div>
+    <p class="tableInfo text text-center">En oversikt over de siste rundene.</p>
+</div>
+
+
+<!-- modal for login screen -->
+<div id="modalDiv"></div>
+
+</body>
+<script src="static/javascript/jquery-3.3.1.min.js"></script>
+<script src="static/javascript/bootstrap.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="static/javascript/ajax.js"></script>
+<script src="static/javascript/lastRounds.js"></script>
+<script src="static/javascript/login.js"></script>
+</html>
