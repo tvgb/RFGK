@@ -40,6 +40,21 @@ router.get('/:player_id', (req, res, next) => {
 	})
 });
 
+router.get('/isAdmin/:player_id', (req, res, next) => {
+	const player_id = req.params.player_id;
+	Player.findOne({
+		where: {
+			id: player_id
+		}
+	}).then(player => {
+		res.json(player.admin);
+	}).catch(err => {
+		console.log(`Failed getting player with id ${player_id}: ${err}`);
+		res.sendStatus(500);
+		return;
+	})
+});
+
 router.get('/with_rounds/:course_id/:year', (req, res, next) => {
 	const course_id = req.params.course_id;
 	const year = req.params.year;
@@ -161,50 +176,64 @@ router.post('/signup', (req, res, next) => {
 });
 
 router.post('/login', (req, res, next) => {
-
-   	const query = "SELECT id, password FROM Player WHERE email = ?;";
-
-	pool.query(query, [req.body.email], (err, rows, fields) => {
-		if (err) {
-			console.log("Failed to get id and password from user " + err);
-			res.sendStatus(500);
-			return;
+	
+	Player.findOne({
+		where: {
+			email: req.body.email
+		}
+	}).then(player => {
+		// Check if players exists in database
+		if (player === null) {
+			return res.status(200).json({
+				message: "Auth failed"
+			});
 		}
 
-		if (rows.length < 1) {
+		// Compare password with password in database, and return signed token if equal
+		bcrypt.compare(req.body.password, player.password, (err, result) => {
+			if (err) {
+				return res.status(401).json({
+					message: 'Auth failed'
+				});
+			}
+
+			if (result) {
+				const token = jwt.sign({
+					id: player.id,
+					first_name: player.first_name,
+					last_name: player.last_name,
+					email: player.email,
+					birthday: player.birthday
+				},
+				process.env.JWT_KEY,
+				{
+					expiresIn: "1h"
+				}
+				);
+				return res.status(200).json({
+					message: "Auth successful",
+					token: token,
+					player: {
+						id: player.id,
+						first_name: player.first_name,
+						last_name: player.last_name,
+						email: player.email,
+						birthday: player.birthday
+					}
+				})
+			}
+
 			return res.status(200).json({
 				message: "Auth failed"
 			})
-		} else {
-			bcrypt.compare(req.body.password, rows[0].password, (err, result) => {
-				if (err) {
-					return res.status(401).json({
-						message: 'Auth failed'
-					});
-				}
+		});
 
-				if (result) {
-					const token = jwt.sign({
-						email: req.body.email,
-						id: rows[0].id
-					},
-					process.env.JWT_KEY,
-					{
-						expiresIn: "1h"
-					}
-					);
-					return res.status(200).json({
-						message: "Auth successful",
-						token: token
-					})
-				}
-
-				return res.status(200).json({
-					message: "Auth failed"
-				})
-			});
-		}
+	}).catch(err => {
+		console.log("Failed to get id and password from user " + err);
+		res.sendStatus(500);
+		return;
 	});
+
 });
 
 
@@ -216,8 +245,6 @@ router.put('/newpassword', checkAuth, (req, res, next) => {
             })
         } else {
 
-            console.log();
-            const connection = getConnection();
             const query = "UPDATE Player\n" +
                           "SET password = ?\n" +
                           "WHERE id = ?;";

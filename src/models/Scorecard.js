@@ -1,5 +1,6 @@
 const sequalize = require('../database/connection');
 const Sequelize =  require('sequelize');
+const Player = require('./Player');
 
 module.exports = sequalize.define('Scorecard', {
 	id: {
@@ -14,6 +15,10 @@ module.exports = sequalize.define('Scorecard', {
 	},
 	created_by: {
 		type: Sequelize.INTEGER(11),
-		allowNull: false
+		allowNull: false,
+		refrences: {
+			model: Player,
+			key: 'id'
+		}
 	}
 });

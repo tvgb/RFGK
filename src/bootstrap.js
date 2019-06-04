@@ -10,7 +10,7 @@ module.exports = async() => {
 	});
 
 	Scorecard.belongsTo(Player, {
-		foreignKey: 'created_by'
+		foreignKey: 'created_by',
 	});
 
 	Scorecard.hasMany(Round, {
