@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 let cors = require('cors')
+require('./src/bootstrap')(); // Bootstrap for sequalize
 
 //route imports
 const roundRoutes = require('./api/routes/rounds');
@@ -15,6 +16,7 @@ app.use(cors());
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
 
 app.use('/api/rounds', roundRoutes);
 app.use('/api/players', playerRoutes);
