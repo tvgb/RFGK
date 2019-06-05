@@ -3,7 +3,7 @@ const https = require('https');
 const fs = require('fs');
 const app = require('./app');
 
-Certificate
+// Certificate
 const privateKey = fs.readFileSync('/etc/letsencrypt/live/xn--rnvikfrisbeegolf-lxb.no/privkey.pem', 'utf8');
 const certificate = fs.readFileSync('/etc/letsencrypt/live/xn--rnvikfrisbeegolf-lxb.no/cert.pem', 'utf8');
 const ca = fs.readFileSync('/etc/letsencrypt/live/xn--rnvikfrisbeegolf-lxb.no/chain.pem', 'utf8');
