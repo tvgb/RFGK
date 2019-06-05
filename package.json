@@ -9,7 +9,7 @@
   "author": "Trym Vegard Gjelseth-Borgen",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "bcrypt": "^3.0.5",
     "bluebird": "^3.5.4",
     "body-parser": "^1.18.3",
