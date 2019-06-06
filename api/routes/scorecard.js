@@ -126,7 +126,10 @@ router.delete('/:scorecard_id', checkAuth, (req, res, next) => {
 		return;
 	});
 
-	res.status(200).json(`Deleted scorecard with id ${scorecard_id} successfully.`);
+	res.status(200).json({
+		message: `Deleted scorecard with id ${scorecard_id} successfully.`,
+		id: scorecard_id
+	});
 });
 
 module.exports = router;
