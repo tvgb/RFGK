@@ -119,58 +119,56 @@ router.get('/leaderboard/best/:course_id', (req, res, next) => {
 });
 
 
+
+/**
+ * errorcode: 1 == Wrong secred code
+ * errorcode: 2 == Email already exists in database
+ * errorcode: 3 == Something went wrong
+ */
 router.post('/signup', (req, res, next) => {
+	console.log(req.body.secret_code);
    	if (process.env.SECRET_CODE === req.body.secret_code) {
-	
-		const query = "SELECT * FROM Player WHERE email = ?;";
-	   
-       	pool.query(query, [req.body.email], (err, rows, fields) => {
-           	if (err) {
-               	return res.status(500).json({
-                   	message: 'Internal server error'
-               	})
-           	}
-
-           	if (rows.length > 0) {
-            	return res.status(401).json({
-                   	message: 'Auth failed'
-               	})
-           	} else {
-               	bcrypt.hash(req.body.password, 10, (error, hash) => {
-                   	if (error) {
-                       	return res.status(500).json({
-                           	error: error
-                       	})
-                   	} else {
-                       	const user = {
-                           	first_name: req.body.first_name,
-                           	last_name: req.body.last_name,
-                           	email: req.body.email,
-                           	password: hash,
-                           	birthday: req.body.birthday
-                       	};
-
-                       	const connection = getConnection();
-                       	const query = "INSERT INTO Player(first_name, last_name, email, password, birthday) VALUES (?, ?, ?, ?, ?);";
-                       	connection.query(query, [user.first_name, user.last_name, user.email, user.password, user.birthday], (error2, rows2, fields) => {
-                           	if (error2) {
-                               	console.log("Failed to create new user: " + error2);
-                               	res.sendStatus(500);
-                               	return;
-                           	}
-
-                           	return res.status(200).json({
-                               	message: 'User succesfully created'
-                           	})
-                       	});
-                   	}
-               	});
-           	}
-       	});
+		
+		Player.findOne({
+			where: {
+				email: req.body.email
+			}
+		}).then(player => {
+			if (player !== null) {
+				return res.status(409).json({
+					error: 'Mail already exists in database',
+					errorcode: 2
+				})
+			} else {
+				bcrypt.hash(req.body.password, 10, (error, hash) => {
+				
+					Player.create({
+						first_name: req.body.firstName,
+						last_name: req.body.lastName,
+						email: req.body.email,
+						password: hash,
+						admin: 0,
+						birthday: req.body.birthday
+					}).then(player => {
+						return res.status(200).json({
+							message: `Created new player with id: ${player.id}.`,
+							player: player
+						});
+					})
+				});
+			}
+		}).catch(err => {
+			return res.status(500).json({
+				message: 'Failed while creating new user.',
+				error: err,
+				errorcode: 3
+			});
+		})
 
    	} else {
-       	return res.status(401).json({
-           	message: 'wrong secret code'
+       	return res.status(418).json({
+			message: 'wrong secret code',
+			errorcode: 1   
        	});
    	}
 });
