@@ -13,7 +13,7 @@ const sequalize = require('sequelize');
 router.get('/', (req, res, next) =>  {
 
 	Player.findAll({
-
+		
 	}).then(players => {
 		res.json(players);
 	}).catch(err => {
@@ -173,6 +173,9 @@ router.post('/signup', (req, res, next) => {
    	}
 });
 
+/**
+ * responsecode: 1 == Wrong email or password
+ */
 router.post('/login', (req, res, next) => {
 	
 	Player.findOne({
@@ -183,7 +186,8 @@ router.post('/login', (req, res, next) => {
 		// Check if players exists in database
 		if (player === null) {
 			return res.status(200).json({
-				message: "Auth failed"
+				message: "Wrong email or password",
+				responsecode: 1
 			});
 		}
 
@@ -222,8 +226,9 @@ router.post('/login', (req, res, next) => {
 			}
 
 			return res.status(200).json({
-				message: "Auth failed"
-			})
+				message: "Wrong email or password",
+				responsecode: 1
+			});
 		});
 
 	}).catch(err => {
@@ -234,31 +239,93 @@ router.post('/login', (req, res, next) => {
 
 });
 
+/**
+ * errorcode: 1 == No player with that id in database
+ * errorcode: 2 == Wrong old password
+ * errorcode: 3 == Failed hashing old password
+ * errorcode: 4 == Failed while updating info
+ * errorcode: 5 == Something went wrong
+ */
+router.put('/updateInfo', checkAuth, (req, res, next) => {
 
-router.put('/newpassword', checkAuth, (req, res, next) => {
-    bcrypt.hash(req.body.password, 10, (error, hash) => {
-        if (error) {
-            return res.status(500).json({
-                error: error
-            })
-        } else {
+	Player.findOne({
+		where: {
+			id: req.userData.id
+		}
+	}).then(player => {
+		bcrypt.compare(req.body.oldPassword, player.password, (err, result) => {
+			if (!result) {
+				return res.status(418).json({
+					message: 'Wrong password',
+					errorcode: 2
+				});
+			}
 
-            const query = "UPDATE Player\n" +
-                          "SET password = ?\n" +
-                          "WHERE id = ?;";
-            pool.query(query, [hash, req.userData.id], (err, row, fields) => {
-                if (err) {
-                    console.log("Failed to create new user: " + err);
-                    res.sendStatus(500);
-                    return;
-                }
+			bcrypt.hash(req.body.newPassword, 10, (err, hash) =>{
+				if (err) {
+					return res.status(500).json({
+						message: 'Something went wrong',
+						error: err,
+						errorcode: 5
+					});
+				}
 
-                return res.status(200).json({
-                    message: 'Password succesfully updated'
-                })
-            });
-        }
-    });
+				let fieldsToUpdate = [];
+			
+				if (req.body.newEmail !== '') { fieldsToUpdate.push('email'); }
+				if (req.body.newPassword !== '') { fieldsToUpdate.push('password'); };
+
+				player.update({
+					email: req.body.newEmail,
+					password: hash
+				}, {
+					fields: fieldsToUpdate
+				}).then(updatedPlayer => {
+					const token = jwt.sign({
+						id: updatedPlayer.id,
+						first_name: updatedPlayer.first_name,
+						last_name: updatedPlayer.last_name,
+						email: updatedPlayer.email,
+						birthday: updatedPlayer.birthday
+					},
+					process.env.JWT_KEY,
+					{
+						expiresIn: '1h'
+					}
+					);
+
+					return res.status(200).json({
+						message: 'Info updated!',
+						token: token,
+						player: {
+							id: updatedPlayer.id,
+							first_name: updatedPlayer.first_name,
+							last_name: updatedPlayer.last_name,
+							email: updatedPlayer.email,
+							birthday: updatedPlayer.birthday
+						}
+					});
+
+				}).catch(err => {
+					console.log(`Failed while updating info: ${err}`)
+					return res.status(500).json({
+						message: `Failed while updating info: ${err}`,
+						error: err,
+						errorcode: 4
+					});
+				});
+			});
+		});
+
+	}).catch(err => {
+		console.log(`No player with id: ${req.userData.id} in database.`);
+		return res.status(500).json({
+			message: `No player with id: ${req.userData.id} in database.`,
+			error: err,
+			errorcode: 1
+		});
+	})
+
 });
 
 module.exports = router;
