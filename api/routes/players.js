@@ -173,6 +173,9 @@ router.post('/signup', (req, res, next) => {
    	}
 });
 
+/**
+ * responsecode: 1 == Wrong email or password
+ */
 router.post('/login', (req, res, next) => {
 	
 	Player.findOne({
@@ -183,7 +186,8 @@ router.post('/login', (req, res, next) => {
 		// Check if players exists in database
 		if (player === null) {
 			return res.status(200).json({
-				message: "Auth failed"
+				message: "Wrong email or password",
+				responsecode: 1
 			});
 		}
 
@@ -221,9 +225,10 @@ router.post('/login', (req, res, next) => {
 				})
 			}
 
-			return res.status(401).json({
-				message: "Auth failed"
-			})
+			return res.status(200).json({
+				message: "Wrong email or password",
+				responsecode: 1
+			});
 		});
 
 	}).catch(err => {
