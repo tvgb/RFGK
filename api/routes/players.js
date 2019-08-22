@@ -8,6 +8,8 @@ const Player = require('../../src/models/Player');
 const Scorecard = require('../../src/models/Scorecard');
 const Round = require('../../src/models/Round');
 const sequalize = require('sequelize');
+const mailer = require('../mailer');
+
 
 // Get all players
 router.get('/', (req, res, next) =>  {
@@ -327,5 +329,96 @@ router.put('/updateInfo', checkAuth, (req, res, next) => {
 	})
 
 });
+
+// Send verification email
+router.post('/sendveremail', (req, res, next) => {
+
+	//const email = req.userData.email;
+	const email = 'tvgb@outlook.com';
+
+	Player.findOne({
+		where: {
+			email: email
+		}
+	}).then(player => {
+
+		const verification_hash = jwt.sign({
+			email: player.email,
+		},
+		process.env.JWT_KEY,
+		{
+			expiresIn: "7d"
+		}
+		);
+
+		player.update({
+			verification_hash: verification_hash
+		}).then( () => {
+			mailer.sendVerificationEmail('ikkesvar@ronvikfrisbeegolf.no', email, verification_hash);
+
+			return res.status(200).json({
+				message: 'Verification email sent'
+			});
+		}).catch( err => {
+			return res.status(500).json({
+				error: err	
+			});
+		});
+
+	}).catch(err => {
+		return res.status(500).json({
+			error: err	
+		})
+	});
+
+	return res.status(200).json({
+		message: 'Verification email sent'
+	});
+});
+
+// Verify email
+router.post('/verify/:verification_hash/:email', (req, res, next) => {
+
+	let verification_hash = req.params.verification_hash;
+	let email = req.params.email;
+
+
+	Player.findOne({
+		where: {
+			email: email
+		}
+	}).then( player => {
+
+		console.log(verification_hash);
+
+		if (player.verification_hash === verification_hash) {
+			player.update({
+				is_verified: true
+			}).then( verifiedPlayer => {
+				return res.status(200).json({
+					verifiedPlayer
+				});
+			}).catch( err => {
+				return res.status(500).json({
+					error: err
+				});
+			});
+		} else {
+			return res.status(401).json({
+				message: 'Wrong verification hash.'
+			});
+		}
+
+		
+	}).catch( err => {
+		return res.status(500).json({
+			error: err
+		});
+	});
+
+});
+
+
+
 
 module.exports = router;

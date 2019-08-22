@@ -33,5 +33,13 @@ module.exports = sequalize.define('Player', {
 	birthday: {
 		type: Sequelize.DATE,
 		allowNull: false
-	} 
+	},
+	is_verified: {
+		type: Sequelize.TINYINT,
+		allowNull: false
+	},
+	verification_hash: {
+		type: Sequelize.STRING(300),
+		allowNull: true
+	}
 });
