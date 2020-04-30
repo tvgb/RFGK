@@ -1,7 +1,7 @@
 FROM node:12
 
 # Create app directory
-WORKDIR /usr/src/RFGK
+WORKDIR /RFGK-backend
 
 
 # Install app dependencies
@@ -9,8 +9,11 @@ WORKDIR /usr/src/RFGK
 # where available (npm@5+)
 COPY package*.json ./
 
+# If you are building your code for production
+# RUN npm ci --only=production
 RUN npm ci --only-production
 
+# Bundle app source
 COPY . .
 
 EXPOSE 3000

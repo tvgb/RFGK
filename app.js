@@ -23,6 +23,12 @@ app.use('/api/players', playerRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/scorecard', scorecardRoutes);
 
+app.get('/', (req, res, next) => {
+    return res.status(200).json({
+        message: 'Hello world!'
+    })
+});
+
 app.use((req, res, next) => {
    const error = new Error('Not found');
    error.status = 404;
