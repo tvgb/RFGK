@@ -328,4 +328,27 @@ router.put('/updateInfo', checkAuth, (req, res, next) => {
 
 });
 
+// router.put('/newpassword', (req, res, next) => {
+// 	let newpassword = req.body.newpassword
+// 	let playerId = req.body.playerId
+
+// 	console.log(newpassword, playerId)
+
+// 	Player.findOne({
+// 		where: {
+// 			id: playerId
+// 		}
+// 	}).then( player => {
+// 		bcrypt.hash(newpassword, 10, (err, hash) => {
+// 			player.update({
+// 				password: hash
+// 			}, {
+// 				fields: ['password']
+// 			}).then(updatedPlayer => {
+// 				console.log(updatedPlayer)
+// 			})
+// 		})
+// 	})
+// })
+
 module.exports = router;
