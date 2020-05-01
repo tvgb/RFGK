@@ -1,12 +1,33 @@
-name: Publish to Registry
+name: Run CI/CD
 on:    
   release:
       types: [published]
   push:
-    branches:
-      - master
+    branches: [master]
 jobs:
-  update:
+  # Build and runs tests
+  job_CI:
+    name: Run Continous Integration
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
+
+  # Create docker image and push to registry if job_CD is run successfully
+  job_CD:
+    name: Run Continous Deployment
+    needs: [job_CI]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
