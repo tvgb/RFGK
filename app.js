@@ -25,7 +25,7 @@ app.use('/api/scorecard', scorecardRoutes);
 
 app.get('/', (req, res, next) => {
     return res.status(200).json({
-        message: 'Hello world!'
+        message: 'Hello world, now CI and CD works!'
     })
 });
 
