@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Player = require('../../models/Player');
 const Round = require('../../models/Round');
 const Scorecard = require('../../models/Scorecard');
-const Course = require('../../models/Course');
 const checkAuth = require('../middleware/check-auth');
 
 
