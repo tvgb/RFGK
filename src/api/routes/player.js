@@ -4,9 +4,91 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('../middleware/check-auth');
 const Player = require('../../models/Player');
+const Round = require('../../models/Round');
+const Scorecard = require('../../models/Scorecard');
+const Course = require('../../models/Course');
 const EmailService = require('../../services/emailService');
-//let players = require('../../data/rfgk_Player.json');
+const players = require('../../data/rfgk_Player.json');
+const courses = require('../../data/rfgk_Course.json');
+const rounds = require('../../data/rfgk_Round.json');
+const scorecards = require('../../data/rfgk_Scorecard.json');
 
+router.get('/do', async (req, res) => {
+	
+	try {
+		let playerIdMap = new Map();
+		let courseIdMap = new Map();
+		let scorecardIdToCardMap = new Map();
+
+		for (const player of players) {
+			const newPlayer = new Player({
+				firstName: player.first_name,
+				lastName: player.last_name,
+				email: player.email,
+				password: player.password,
+				admin: player.admin,
+				birthday: player.birthday,
+				isVerified: true,
+				verificationToken: player.verification_hash,
+				deletePlayerIfNotVerified: false
+			});
+
+			const savedNewPlayer = await newPlayer.save();
+
+			playerIdMap.set(player.id, savedNewPlayer._id);
+		}
+
+		for (const course of courses) {
+			const newCourse = new Course({
+				name: course.name,
+				holes: course.holes,
+				par: course.par
+			});
+
+			const savedNewCourse = await newCourse.save();
+
+			courseIdMap.set(course.id, savedNewCourse._id);
+		}
+
+		for (const scorecard of scorecards) {
+			const newScorecard = new Scorecard({
+				datetime: scorecard.date_time,
+				createdBy: playerIdMap.get(scorecard.created_by)
+			});
+			
+			scorecardIdToCardMap.set(scorecard.id, newScorecard);
+		}
+
+		for (const round of rounds) {
+			const newRound = new Round({
+				datetime: round.date,
+				player: playerIdMap.get(round.player_id),
+				course: courseIdMap.get(round.course_id),
+				numberOfThrows: round.number_of_throws
+			});
+			
+			const savedNewRound = await newRound.save();
+
+			scorecardIdToCardMap.get(round.scorecard_id).rounds.unshift(savedNewRound._id);
+		}
+
+		for (const scorecard of scorecardIdToCardMap.values()) {
+			await scorecard.save();
+		}
+
+		return res.status(200).json({
+			'message': 'Everything went nicely!'
+		});
+
+	} catch (error) {
+		console.log(error);
+
+		return res.status(500).json({
+			'message': 'Something went wrong!'
+		});
+	}
+	
+});
 
 // Get all players
 router.get('/', checkAuth, async (req, res) =>  {

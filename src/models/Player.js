@@ -34,7 +34,7 @@ const PlayerSchema = mongoose.Schema({
     },
     verificationToken: {
         type: String,
-        required: true,
+        required: false,
         select: false
     },
     deletePlayerIfNotVerified: {

@@ -1,135 +1,75 @@
-// const express = require('express');
-// const router = express.Router();
-// const Scorecard = require('../../src/models/Scorecard');
-// const Round = require('../../src/models/Round');
-// const Player = require('../../src/models/Player');
-// const Course = require('../../src/models/Course');
-// const checkAuth = require('../middleware/check-auth');
+const express = require('express');
+const router = express.Router();
+const Player = require('../../models/Player');
+const Round = require('../../models/Round');
+const Scorecard = require('../../models/Scorecard');
+const Course = require('../../models/Course');
+const checkAuth = require('../middleware/check-auth');
 
 
-// // Returns all existing scorecards.
-// router.get('/', (req, res, next) =>  {
+// GET all existing scorecards.
+router.get('/', async (req, res) =>  {
 
-// 	Scorecard.findAll({
-// 		attributes: ['date_time', 'id'],
-// 		include: [{
-// 			model: Round,
-// 			attributes: [['number_of_throws', 'throws'], 'date', 'scorecard_id'],
-// 			include: [{
-// 				model: Player,
-// 				attributes: ['id', 'first_name', 'last_name']
-// 			},
-// 			{
-// 				model: Course,
-// 				attributes: ['id', ['name', 'course_name'], 'holes', 'par']
-// 			}]
+    try {
+        const scorecards = await Scorecard.find()
+        .populate({
+            path: 'createdBy'
+        })
+        .populate({
+            path: 'rounds',
+            populate:
+                [{
+                    path: 'player'
+                },{
+                    path: 'course'
+                }]
+        });
+        
+        return res.status(200).json(scorecards);
 
-// 		},{
-// 			model: Player,	
-// 			attributes: ['first_name', 'last_name']
-// 		}],
-// 		order: [
-// 			['date_time', 'DESC'],
-// 			[Round, 'number_of_throws', 'ASC']
-// 		]
-// 	}).then(scorecards => {
-// 		res.json(scorecards);
-// 	}).catch(function (err) {
-// 		console.log(`Failed getting all scorecards: ${err}`);
-// 		res.sendStatus(500);
-// 		return;
-// 	});
-// });
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500);
+    }
+});
 
 
-// // Returns scorecard with id "scorecard_id" if it exists.
-// router.get('/:scorecard_id', (req, res, next) =>  {
-// 	const scorecard_id = req.params.scorecard_id;
-	
-// 	Scorecard.findOne ({
-// 		attributes: ['date_time', 'id'],
-// 		include: [{
-// 			model: Round,
-// 				attributes: [['number_of_throws', 'throws'], 'date'],
-// 				include: [{
-// 					model: Player,
-// 					attributes: ['first_name', 'last_name']
-// 				},
-// 				{
-// 					model: Course,
-// 					attributes: [['name', 'course_name'], 'holes', 'par']
-// 				}]
+// POST new scorecard.
+router.post('/', checkAuth, async (req, res) => {
 
-// 		},{
-// 			model: Player,
-// 			attributes: ['first_name', 'last_name']
-// 		}],
-// 		where: {
-// 			id: scorecard_id
-// 		}
-// 	}).then(scorecards => {
-// 		res.json(scorecards);
-// 	}).catch(function (err) {
-// 		console.log(`Failed getting scorecard with id ${scorecard_id}: ${err}`);
-// 		res.sendStatus(500);
-// 		return;
-// 	});
-// });
+    try {
 
-// router.post('/', checkAuth, (req, res, next) => {
+        let roundIds = [];
 
-// 	Scorecard.create({
-// 		date_time: req.body.date_time,
-// 		created_by: req.body.Player.id
+        for (const round of req.body.rounds) {
+            const newRound = new Round({
+                datetime: round.date,
+                player: round.player.id,
+                course: round.course.id,
+                numberOfThrows: round.throws
+            });
+    
+            const savedNewRound = await newRound.save();
+    
+            roundIds.push(savedNewRound._id);
+        }
+    
+        const newScorecard = new Scorecard({
+            datetime: req.body.datetime,
+            createdBy: req.body.player.id,
+            rounds: roundIds
+        });
 
-// 	}).then(scorecard => {
-// 		req.body.Rounds.forEach(round => {
-// 			Round.create({
-// 				date: round.date,
-// 				player_id: round.Player.id,
-// 				course_id: round.Course.id,
-// 				number_of_throws: round.throws,
-// 				scorecard_id: scorecard.id
-// 			});
-// 		});
-		
-// 	}).catch(err => {
-// 		console.log(`Failed posting scorecard: ${err}`);
-// 		res.sendStatus(500);
-// 		return;
-// 	});
-// });
+        await newScorecard.save();
 
-// router.delete('/:scorecard_id', checkAuth, (req, res, next) => {
-// 	const scorecard_id = req.params.scorecard_id;
+        return res.status(200);
 
-// 	Round.destroy({
-// 		where: {
-// 			scorecard_id: scorecard_id
-// 		}
+    } catch (error) {
+        console.log(error);
 
-// 	}).then(res => {
-		
-// 		Scorecard.destroy({
-// 			where: {
-// 				id: scorecard_id
-// 			}
-// 		}).catch(err => {
-// 			console.log(`Failed to delete scorecard with id ${id}: ${err}`);
-// 			res.sendStatus(500);
-// 			return;
-// 		});
+        return res.status(500);
+    }
+});
 
-// 	}).catch(err => {
-// 		console.log(`Failed to delete rounds connected to scorecard with id ${id}: ${err}`);
-// 		res.sendStatus(500);
-// 		return;
-// 	});
-
-// 	res.status(200).json({
-// 		message: `Deleted scorecard with id ${scorecard_id} successfully.`,
-// 		id: scorecard_id
-// 	});
-// });
-
-// module.exports = router;
+module.exports = router;

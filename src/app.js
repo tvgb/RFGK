@@ -8,8 +8,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 //route imports
-const roundRoutes = require('./api/routes/rounds');
-const playerRoutes = require('./api/routes/players');
+const roundRoutes = require('./api/routes/round');
+const playerRoutes = require('./api/routes/player');
 const courseRoutes = require('./api/routes/course');
 const scorecardRoutes = require('./api/routes/scorecard');
 
@@ -21,10 +21,10 @@ app.use(express.json());
 app.use(cors());
 
 
-//app.use('/api/rounds', roundRoutes);
-app.use('/api/players', playerRoutes);
-//app.use('/api/courses', courseRoutes);
-//app.use('/api/scorecard', scorecardRoutes);
+//app.use('/api/round', roundRoutes);
+app.use('/api/player', playerRoutes);
+//app.use('/api/course', courseRoutes);
+app.use('/api/scorecard', scorecardRoutes);
 
 app.get('/', (req, res) => {
     return res.status(200).json({

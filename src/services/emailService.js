@@ -108,7 +108,7 @@ class EmailService {
 						</p>
 						<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
 
-						<a id="verifyBtn" href="${process.env.SERVER_URL}/api/players/verify/${verificationToken}"> Bekreft epost </a>
+						<a id="verifyBtn" href="${process.env.SERVER_URL}/api/player/verify/${verificationToken}"> Bekreft epost </a>
 
 						<p id="regards">
 							Mvh.
