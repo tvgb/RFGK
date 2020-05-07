@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(cors());
 
 
-//app.use('/api/round', roundRoutes);
+app.use('/api/round', roundRoutes);
 app.use('/api/player', playerRoutes);
 app.use('/api/course', courseRoutes);
 app.use('/api/scorecard', scorecardRoutes);
