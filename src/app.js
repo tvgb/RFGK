@@ -32,6 +32,14 @@ app.get('/', (req, res) => {
     });
 });
 
+app.post('/', (req, res) => {
+    console.log(req.body);
+
+    return res.status(200).json({
+        message: 'testing 123'
+    });
+});
+
 app.use((req, res, next) => {
    const error = new Error('Not found');
    error.status = 404;
