@@ -4,7 +4,7 @@
   "description": "Webpage for Ronvik Frisbeegolf Klubb",
   "main": "index.js",
   "scripts": {
-    "start": "node ./node_modules/nodemon/bin/nodemon.js src/server.js --exec \"npm run lint && node\"",
+    "start": "node ./node_modules/nodemon/bin/nodemon.js server.js --exec \"npm run lint && node\"",
     "lint": "./node_modules/.bin/eslint **/*.js",
     "test": "mocha"
   },
