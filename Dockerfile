@@ -1,7 +1,7 @@
 FROM node:12
 
 # Create app directory
-WORKDIR /RFGK-backend/src/
+WORKDIR /RFGK-backend/
 
 
 # Install app dependencies
@@ -18,4 +18,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["node", "src/server.js"]
+CMD ["node", "server.js"]
