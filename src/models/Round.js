@@ -1,28 +1,27 @@
-const sequalize = require('../database/connection');
-const Sequelize =  require('sequelize');
+const mongoose = require('mongoose');
 
-module.exports = sequalize.define('Round', {
-	id: {
-		type: Sequelize.INTEGER(11),
-		allowNull: false,
-		autoIncrement: true,
-		primaryKey: true
-	},
-	date: Sequelize.DATEONLY,
-	player_id: {
-		type: Sequelize.INTEGER(11),
-		allowNull: false
-	},
-	course_id: {
-		type: Sequelize.INTEGER(11),
-		allowNull: false
-	},
-	number_of_throws: {
-		type: Sequelize.INTEGER(11),
-		allowNull: false
-	},
-	scorecard_id: {
-		type: Sequelize.INTEGER(11),
-		allowNull: false
-	} 
+const RoundSchema = mongoose.Schema({
+    datetime: {
+        type: Date,
+        required: true
+    },
+    player: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Player',
+        required: true
+    },
+    course: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
+        required: true
+    },
+    numberOfThrows: {
+        type: Number,
+        validate: {
+            validator: Number.isInteger,
+            message: '{Value} is not an integer'
+        },
+        required: true
+    },
 });
+module.exports = mongoose.model('Round', RoundSchema);

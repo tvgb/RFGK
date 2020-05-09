@@ -108,3 +108,6 @@ Temporary Items
 
 
 config.json
+
+# Database dump
+/data
