@@ -1,24 +1,26 @@
-const sequalize = require('../database/connection');
-const Sequelize =  require('sequelize');
+const mongoose = require('mongoose');
 
-
-module.exports = sequalize.define('Course', {
-	id: {
-		type: Sequelize.INTEGER(11),
-		allowNull: false,
-		autoIncrement: true,
-		primaryKey: true
-	},
-	name: {
-		type: Sequelize.STRING(100),
-		allowNull: false
-	},
-	holes: {
-		type: Sequelize.INTEGER(11),
-		allowNull: false
-	},
-	par: {
-		type: Sequelize.INTEGER(11),
-		allowNull: false
-	} 
+const CourseSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    holes: {
+        type: Number,
+        validate: {
+            validator: Number.isInteger,
+            message: '{Value} is not an integer'
+        },
+        required: true
+    },
+    par: {
+        type: Number,
+        validate: {
+            validator: Number.isInteger,
+            message: '{Value} is not an integer'
+        },
+        required: true
+    }
 });
+
+module.exports = mongoose.model('Course', CourseSchema);

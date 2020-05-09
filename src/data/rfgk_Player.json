@@ -1,0 +1,134 @@
+[
+  {
+    "id": 1,
+    "first_name": "Trym Vegard",
+    "last_name": "Gjelseth-Borgen",
+    "email": "tvgb@outlook.com",
+    "password": "$2b$10$pRxQTbf1N45rqbLjBxfr5OL6Ar9EU30X.m9NtjXDsmA1lD9uzqIgy",
+    "admin": 1,
+    "birthday": "1997-01-14",
+    "is_verified": 0,
+    "verification_hash": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InR2Z2JAb3V0bG9vay5jb20iLCJpYXQiOjE1NjI1MzA2MTUsImV4cCI6MTU2MzEzNTQxNX0.blyKpZNZPgwSQ7PnID8tK3mwajhR5FOMlO7CBcdheNM"
+  },
+  {
+    "id": 2,
+    "first_name": "Marcus",
+    "last_name": "Johansen",
+    "email": "marcus",
+    "password": "$2b$10$BSqb5bAguGuHg94zmvJan.KRntWd6bYzD7VqMUgnuwttYkQWeZPdK",
+    "admin": 0,
+    "birthday": null,
+    "is_verified": 0,
+    "verification_hash": null
+  },
+  {
+    "id": 4,
+    "first_name": "Richard",
+    "last_name": "Dundas",
+    "email": "richard",
+    "password": "$2b$10$IwOswmAHkzjN.sPcM2FLz.u1K.7b1.GxJ/4HSwv58kpztMy.grZs2",
+    "admin": 0,
+    "birthday": null,
+    "is_verified": 0,
+    "verification_hash": null
+  },
+  {
+    "id": 8,
+    "first_name": "Kristoffer",
+    "last_name": "Madsen Andersen",
+    "email": "kristoffer",
+    "password": "$2b$10$bSWug./Zkuv2lNLCbciEZuc8iuOiZIYmPrbQQNoYToTzSbelmZcS.",
+    "admin": 0,
+    "birthday": null,
+    "is_verified": 0,
+    "verification_hash": null
+  },
+  {
+    "id": 9,
+    "first_name": "Helene",
+    "last_name": "Seljeås",
+    "email": "Helene",
+    "password": "$2b$10$O33P5udOFQXTRXEp/mMuROQfCguI4EaqkuN65rLSCXvVL3faubqMW",
+    "admin": 0,
+    "birthday": null,
+    "is_verified": 0,
+    "verification_hash": null
+  },
+  {
+    "id": 10,
+    "first_name": "Abdul",
+    "last_name": "Shafique",
+    "email": "Abdul",
+    "password": "$2b$10$pRxQTbf1N45rqbLjBxfr5OL6Ar9EU30X.m9NtjXDsmA1lD9uzqIgy",
+    "admin": 0,
+    "birthday": null,
+    "is_verified": 0,
+    "verification_hash": null
+  },
+  {
+    "id": 19,
+    "first_name": "Vebjørn",
+    "last_name": "Lysberg",
+    "email": "vebjørn",
+    "password": "$2b$10$qv3qf8hgALVjVOStcLTQ6.VINXsRi5D98uoLdnPwtMmeBHE0vrtoS",
+    "admin": 0,
+    "birthday": null,
+    "is_verified": 0,
+    "verification_hash": null
+  },
+  {
+    "id": 20,
+    "first_name": "Anette",
+    "last_name": "Sundfær",
+    "email": "AnetteSundfær",
+    "password": "$2b$10$.sBO8VrnCoDA9eY5MzRBIOiza9MY.D0HoCLjWXQw45HSaiRlMOySC",
+    "admin": 0,
+    "birthday": null,
+    "is_verified": 0,
+    "verification_hash": null
+  },
+  {
+    "id": 21,
+    "first_name": "Anette",
+    "last_name": "Brendeford",
+    "email": "AnetteBrendeford",
+    "password": "$2b$10$J.52tCsgWkD49XFAhsWcKOZLswP2l1NefbiU/U.GESH7ZwOhlOiI6",
+    "admin": 0,
+    "birthday": null,
+    "is_verified": 0,
+    "verification_hash": null
+  },
+  {
+    "id": 31,
+    "first_name": "Sivert Leander",
+    "last_name": "Engan Wenberg ",
+    "email": "Sivertwenberg@gmail.com",
+    "password": "$2b$10$Wcy1z/.To41DHxOBaij9P.UBDulWh1Lus2XAW/MPmZz0lRy9yx28.",
+    "admin": 0,
+    "birthday": "1997-02-02",
+    "is_verified": 0,
+    "verification_hash": null
+  },
+  {
+    "id": 32,
+    "first_name": "Eline Loe ",
+    "last_name": "Rønvik ",
+    "email": "elineloe@gmail.com",
+    "password": "$2b$10$filHcopzPdrx103dd9orfOatcqRNOFAAZgAVE2tqigOeMZpo6zQ6K",
+    "admin": 0,
+    "birthday": "1997-01-16",
+    "is_verified": 0,
+    "verification_hash": null
+  },
+  {
+    "id": 33,
+    "first_name": "Joakim",
+    "last_name": "Ljønes",
+    "email": "Joakim.ljomes@gmail.com",
+    "password": "$2b$10$mmO5ofXrfI5oFk7yvqAXaeH96yTeflNiqt/X/ljqoqvZvNAKHSwd6",
+    "admin": 0,
+    "birthday": "1997-09-08",
+    "is_verified": 0,
+    "verification_hash": null
+  }
+]

@@ -1,37 +1,48 @@
-const sequalize = require('../database/connection');
-const Sequelize =  require('sequelize');
+const mongoose = require('mongoose');
 
-
-module.exports = sequalize.define('Player', {
-	id: {
-		type: Sequelize.INTEGER(11),
-		allowNull: false,
-		autoIncrement: true,
-		primaryKey: true
-	},
-	first_name: {
-		type: Sequelize.STRING(100),
-		allowNull: false
-	},
-	last_name: {
-		type: Sequelize.STRING(100),
-		allowNull: false
-	},
-	email: {
-		type: Sequelize.STRING(100),
-		allowNull: false,
-		uniqe: true
-	},
-	password: {
-		type: Sequelize.STRING(300),
-		allowNull: false
-	},
-	admin: {
-		type: Sequelize.TINYINT,
-		allowNull: false
-	},
-	birthday: {
-		type: Sequelize.DATE,
-		allowNull: false
-	} 
+const PlayerSchema = mongoose.Schema({
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true,
+        select: false
+    },
+    admin: {
+        type: Boolean,
+        default: 0,
+        required: true
+    },
+    birthday: {
+        type: Date,
+        required: false
+    },
+    isVerified: {
+        type: Boolean,
+        default: 0,
+        required: true
+    },
+    verificationToken: {
+        type: String,
+        required: false,
+        select: false
+    },
+    deletePlayerIfNotVerified: {
+        type: Boolean,
+        required: true,
+        default: false,
+        select: false
+    }
 });
+
+module.exports = mongoose.model('Player', PlayerSchema);

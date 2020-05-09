@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Parken Frisbeegolfbane",
+    "holes": 11,
+    "par": 34
+  },
+  {
+    "id": 2,
+    "name": "Bratten Frisbeegolfbane",
+    "holes": 18,
+    "par": 56
+  },
+  {
+    "id": 3,
+    "name": "Parken Frisbeegolfbane (2019)",
+    "holes": 12,
+    "par": 37
+  },
+  {
+    "id": 4,
+    "name": "Muselunden DiscGolfPark ",
+    "holes": 12,
+    "par": 28
+  },
+  {
+    "id": 5,
+    "name": "Krokhol Disc Golf Course",
+    "holes": 18,
+    "par": 61
+  }
+]
