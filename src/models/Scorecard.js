@@ -10,6 +10,11 @@ const ScorecardSchema = mongoose.Schema({
         ref: 'Player',
         required: true
     },
+    course: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
+        required: true
+    },
     rounds: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Round'
