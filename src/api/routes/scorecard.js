@@ -24,7 +24,8 @@ router.get('/', async (req, res) =>  {
         });
 
         // Get round by year if optional query param year is set
-        if (req.query.year) {
+
+        if (req.query.year !== undefined && req.query.year !== 'all') {
             const year = parseInt(req.query.year, 10);
             const startDate = moment(`${year}-01-01`, moment.DATE);
             const endDate = moment(`${year + 1}-01-01`, moment.DATE).add(-1, 'days');
@@ -33,9 +34,8 @@ router.get('/', async (req, res) =>  {
         }
         
         // Get round by course if optional query param course is set
-        if (req.query.course) {
+        if (req.query.course !== undefined && req.query.course !== 'all') {
             const course = req.query.course;
-            
             query.where({
                 'course': course
             });
