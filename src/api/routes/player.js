@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('../middleware/check-auth');
@@ -36,11 +37,11 @@ router.get('/:player_id', checkAuth, async (req, res) => {
 router.post('/signup', async (req, res) => {
 
 	if (process.env.SECRET_CODE === req.body.secret_code) {
-		
+
 		const player = await Player.findOne({
 			email: req.body.email
 		});
-		
+
 		// Player with the same email already exists in the database
 		if (player !== null) {
 			return res.status(409).json({
@@ -77,10 +78,10 @@ router.post('/signup', async (req, res) => {
 					verificationToken: verificationToken,
 					deletePlayerIfNotVerified: true
 				});
-				
+
 				try {
 					const newPlayerSavedSuccessfully = await newPlayer.save();
-					
+
 					if (newPlayerSavedSuccessfully) {
 						await EmailService.sendVerificationEmail(
 							'ikkesvar@ronvikfrisbeegolf.no',
@@ -94,7 +95,7 @@ router.post('/signup', async (req, res) => {
 						});
 					}
 
-					
+
 				} catch (error) {
 					console.log(error);
 
@@ -120,10 +121,12 @@ router.post('/signup', async (req, res) => {
  * errorcode: 4 == Account not verified
  */
 router.post('/login', async (req, res) => {
-	
+
 	try {
+		const email = req.body.email.toLowerCase();
+
 		const player = await Player.findOne({
-			email: req.body.email
+			email: email
 		}).select('+password');
 
 		// Email does not exist in database
@@ -153,29 +156,45 @@ router.post('/login', async (req, res) => {
 
 			if (result) {
 				const token = jwt.sign({
-					id: player.id,
-					first_name: player.firstName,
-					last_name: player.lastName,
+					_id: player._id,
+					firstName: player.firstName,
+					lastName: player.lastName,
 					email: player.email,
 					birthday: player.birthday
 				},
 				process.env.JWT_KEY,
 				{
-					expiresIn: '12h'
+					expiresIn: '24h'
 				}
 				);
-				return res.status(200).json({
-					token: token,
-					player: {
-						id: player.id,
-						first_name: player.firstName,
-						last_name: player.lastName,
-						email: player.email,
-						birthday: player.birthday
-					}
-				});
+
+				// Our token expires after one day
+				const oneDayToSeconds = 24 * 60 * 60;
+
+				return res.cookie('token', token
+					// {
+					// 	maxAge: oneDayToSeconds,
+					// 	// You can't access these tokens in the client's javascript
+					// 	httpOnly: true,
+					// 	// Forces to use https in production
+					// 	secure: process.env.MODE === 'production' ? true : false
+					// }
+				).send();
+
+				// return res.status(200).json({
+				// 	token: token,
+				// 	player: {
+				// 		id: player.id,
+				// 		first_name: player.firstName,
+				// 		last_name: player.lastName,
+				// 		email: player.email,
+				// 		birthday: player.birthday
+				// 	}
+				// });
+
+				// const signedCookie = cookieParser;
 			}
-			
+
 			// Password was incorrect
 			return res.status(400).json({
 				errorcode: 1
@@ -195,7 +214,7 @@ router.post('/login', async (req, res) => {
 
 /**
  * Verify email
- * 
+ *
  * errorcode: 1 == Wrong email
  * errorcode: 2 == Auth failed while trying to compare hashes
  * errorcode: 3 == Something went wrong
@@ -232,7 +251,7 @@ router.get('/verify/:verificationToken', async (req, res) => {
 	if (player.verificationToken === req.params.verificationToken) {
 		player.isVerified = true;
 		player.deletePlayerIfNotVerified = false;
-		
+
 		try {
 			await player.save();
 
@@ -276,22 +295,22 @@ router.put('/updateInfo', checkAuth, async (req, res) => {
 			await bcrypt.hash(req.body.newPassword, 10, async (error, hash) =>{
 				if (error) {
 					console.log(error);
-	
+
 					return res.status(500).json({
 						errorcode: 5
 					});
 				}
-				
+
 				if (req.body.newEmail.trim() !== '') {
 					player.email = req.body.newEmail;
 					player.isVerified = false;
 				}
 
 				player.password = hash;
-				
+
 				try {
 					const updatedPlayer = await player.save();
-					
+
 					const token = jwt.sign({
 						id: updatedPlayer.id,
 						first_name: updatedPlayer.firstName,
@@ -304,7 +323,7 @@ router.put('/updateInfo', checkAuth, async (req, res) => {
 						expiresIn: '12h'
 					}
 					);
-	
+
 					return res.status(200).json({
 						token: token,
 						player: {
@@ -317,12 +336,12 @@ router.put('/updateInfo', checkAuth, async (req, res) => {
 					});
 
 				} catch (error) {
-					
+
 					return res.status(500).json({
 						errorcode: 5
 					});
 				}
-			
+
 			});
 		}
 	});

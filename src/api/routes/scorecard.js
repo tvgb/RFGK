@@ -41,9 +41,8 @@ router.get('/', async (req, res) =>  {
             });
         }
 
-
         const scorecards = await query.exec();
-
+  
         return res.status(200).json(scorecards);
 
 
@@ -61,13 +60,16 @@ router.post('/', checkAuth, async (req, res) => {
     try {
 
         let roundIds = [];
+        const course = req.body.course;
+        const datetime = req.body.datetime;
+        console.log(course, req.body.rounds[0].sum);
 
         for (const round of req.body.rounds) {
             const newRound = new Round({
-                datetime: round.date,
-                player: round.player.id,
-                course: round.course.id,
-                numberOfThrows: round.throws
+                datetime: datetime,
+                player: round.player._id,
+                course: course._id,
+                numberOfThrows: course.par + round.sum 
             });
     
             const savedNewRound = await newRound.save();
@@ -76,15 +78,15 @@ router.post('/', checkAuth, async (req, res) => {
         }
     
         const newScorecard = new Scorecard({
-            datetime: req.body.datetime,
-            createdBy: req.body.player.id,
-            course: req.body.course.id,
+            datetime: datetime,
+            createdBy: req.userData._id,
+            course: course._id,
             rounds: roundIds
         });
 
-        await newScorecard.save();
+        const storedScorecard = await newScorecard.save();
 
-        return res.status(200);
+        return res.json(storedScorecard);
 
     } catch (error) {
         console.log(error);

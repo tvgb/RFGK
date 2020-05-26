@@ -6,6 +6,8 @@ const express = require('express');
 const cors = require('cors');
 //const morgan = require('morgan');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+
 
 //route imports
 const roundRoutes = require('./api/routes/round');
@@ -17,9 +19,18 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser(process.env.COOKIE_KEY));
 //app.use(morgan('comine'));
-app.use(cors());
 
+const cors_config = {
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    credentials: true
+};
+
+app.use(cors(cors_config));
 
 app.use('/api/round', roundRoutes);
 app.use('/api/player', playerRoutes);
