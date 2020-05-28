@@ -125,9 +125,14 @@ router.post('/login', async (req, res) => {
 	try {
 		const email = req.body.email.toLowerCase();
 
-		const player = await Player.findOne({
+		const query = Player.findOne({
 			email: email
-		}).select('+password');
+		});
+		
+		query.select('+password');
+		query.populate({path: 'favouriteCourse'});
+		
+		let player = await query.exec();
 
 		// Email does not exist in database
 		if (player === null) {
@@ -171,7 +176,7 @@ router.post('/login', async (req, res) => {
 				// Our token expires after one day
 				const oneDayToSeconds = 24 * 60 * 60;
 
-				return res.cookie('token', token
+				res.cookie('token', token
 					// {
 					// 	maxAge: oneDayToSeconds,
 					// 	// You can't access these tokens in the client's javascript
@@ -179,7 +184,15 @@ router.post('/login', async (req, res) => {
 					// 	// Forces to use https in production
 					// 	secure: process.env.MODE === 'production' ? true : false
 					// }
-				).send();
+				);
+				
+				return res.json(
+				{
+					'favouriteCourse': player.favouriteCourse,
+					'showLatestYearOnly': player.showLatestYearOnly,
+					'recieveAddedToScorecardMail': player.recieveAddedToScorecardMail
+
+				});
 
 				// return res.status(200).json({
 				// 	token: token,
@@ -345,6 +358,30 @@ router.put('/updateInfo', checkAuth, async (req, res) => {
 			});
 		}
 	});
+});
+
+router.put('/updateSettings', checkAuth, async (req, res) => {
+	try {
+		const player = await Player.findById(req.userData._id).populate('favouriteCourse');
+
+		player.favouriteCourse = req.body.favouriteCourse;
+		player.recieveAddedToScorecardMail = req.body.recieveAddedToScorecardMail;
+		player.showLatestYearOnly = req.body.showLatestYearOnly;
+
+		await player.save();
+
+		return res.json(
+		{
+			'favouriteCourse': player.favouriteCourse,
+			'showLatestYearOnly': player.showLatestYearOnly,
+			'recieveAddedToScorecardMail': player.recieveAddedToScorecardMail
+		});
+
+	} catch (error) {
+		console.log(error);
+
+		return res.status(500);
+	}
 });
 
 module.exports = router;

@@ -62,7 +62,6 @@ router.post('/', checkAuth, async (req, res) => {
         let roundIds = [];
         const course = req.body.course;
         const datetime = req.body.datetime;
-        console.log(course, req.body.rounds[0].sum);
 
         for (const round of req.body.rounds) {
             const newRound = new Round({
