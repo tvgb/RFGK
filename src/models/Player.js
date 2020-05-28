@@ -27,6 +27,19 @@ const PlayerSchema = mongoose.Schema({
         type: Date,
         required: false
     },
+    favouriteCourse: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
+        default: null
+    },
+    showLatestYearOnly: {
+        type: Boolean,
+        default: false
+    },
+    recieveAddedToScorecardMail: {
+        type: Boolean,
+        default: true
+    },
     isVerified: {
         type: Boolean,
         default: 0,
