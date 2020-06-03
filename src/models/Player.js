@@ -20,7 +20,7 @@ const PlayerSchema = mongoose.Schema({
     },
     admin: {
         type: Boolean,
-        default: 0,
+        default: false,
         required: true
     },
     birthday: {
@@ -42,7 +42,7 @@ const PlayerSchema = mongoose.Schema({
     },
     isVerified: {
         type: Boolean,
-        default: 0,
+        default: false,
         required: true
     },
     verificationToken: {

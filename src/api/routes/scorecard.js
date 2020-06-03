@@ -37,7 +37,7 @@ router.get('/', async (req, res) =>  {
         if (req.query.course !== undefined && req.query.course !== 'all') {
             const course = req.query.course;
             query.where({
-                'course': course
+                'course': course._id
             });
         }
 
@@ -58,6 +58,11 @@ router.get('/', async (req, res) =>  {
 router.post('/', checkAuth, async (req, res) => {
 
     try {
+
+        if (!req.userData.isVerified) {
+            res.status(405);
+            return res.send();
+        }
 
         let roundIds = [];
         const course = req.body.course;
