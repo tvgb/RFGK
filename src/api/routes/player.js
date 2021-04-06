@@ -6,6 +6,7 @@ const checkAuth = require('../middleware/check-auth');
 const Player = require('../../models/Player');
 const EmailService = require('../../services/emailService');
 
+let validRefreshTokens = [];
 
 // Get all players
 router.get('/', checkAuth, async (req, res) =>  {
@@ -60,9 +61,9 @@ router.post('/signup', async (req, res) => {
 				}
 
 				const verificationToken = jwt.sign({
-					email: req.body.email,
+					email: req.body.email
 				},
-				process.env.JWT_KEY,
+				process.env.JWT_ACCESS_SECRET,
 				{
 					expiresIn: '24h'
 				}
@@ -153,55 +154,65 @@ router.post('/login', async (req, res) => {
 			}
 
 			if (result) {
-				const token = jwt.sign({
+				const access_token = jwt.sign({
 					_id: player._id,
-					firstName: player.firstName,
-					lastName: player.lastName,
-					email: player.email,
-					birthday: player.birthday,
-					isVerified: player.isVerified
+					isVerified:  player.isVerified
 				},
-				process.env.JWT_KEY,
+				process.env.JWT_ACCESS_SECRET,
 				{
-					expiresIn: '24h'
+					expiresIn: '1h'
 				}
 				);
 
-				// Our token expires after one day
-				const oneDayToSeconds = 24 * 60 * 60;
-
-				res.cookie('token', token
-					// {
-					// 	maxAge: oneDayToSeconds,
-					// 	// You can't access these tokens in the client's javascript
-					// 	httpOnly: true,
-					// 	// Forces to use https in production
-					// 	secure: process.env.MODE === 'production' ? true : false
-					// }
+				const refresh_token = jwt.sign({
+					_id: player._id
+				},
+				process.env.JWT_REFRESH_SECRET,
+				{
+					expiresIn: '120d'
+				}
 				);
 
-				res.cookie('isVerified', player.isVerified);
+				validRefreshTokens.push(refresh_token);
+
+				// Our token expires after one day
+				const oneHourToMilliseconds = 1000 * 60 * 60;
+				const hundredAndTwentyDaysToMilliseconds = 1000 * 60 * 60 * 24 * 120;
+
+				res.cookie('access_token', access_token,
+					{
+						maxAge: oneHourToMilliseconds,
+						httpOnly: false,
+						secure: process.env.MODE === 'production' ? true : false,
+						sameSite: 'lax'
+					}
+				);
+
+				res.cookie('isVerified', player.isVerified,
+					{
+						maxAge: oneHourToMilliseconds,
+						httpOnly: false,
+						secure: process.env.MODE === 'production' ? true : false,
+						sameSite: 'lax'
+					}
+				);
+
+				res.cookie('refresh_token', refresh_token,
+					{
+						maxAge: hundredAndTwentyDaysToMilliseconds,
+						httpOnly: false,
+						secure: process.env.MODE === 'production' ? true : false,
+						sameSite: 'lax'
+					}
+				);
 				
 				return res.json(
 				{
 					'favouriteCourse': player.favouriteCourse,
 					'showLatestYearOnly': player.showLatestYearOnly,
-					'recieveAddedToScorecardMail': player.recieveAddedToScorecardMail
-
+					'recieveAddedToScorecardMail': player.recieveAddedToScorecardMail,
+					'isVerified': player.isVerified
 				});
-
-				// return res.status(200).json({
-				// 	token: token,
-				// 	player: {
-				// 		id: player.id,
-				// 		first_name: player.firstName,
-				// 		last_name: player.lastName,
-				// 		email: player.email,
-				// 		birthday: player.birthday
-				// 	}
-				// });
-
-				// const signedCookie = cookieParser;
 			}
 
 			// Password was incorrect
@@ -221,6 +232,58 @@ router.post('/login', async (req, res) => {
 	}
 });
 
+router.post('/logout', (req, res) => {
+	const refresh_token = req.cookies.refresh_token;
+	validRefreshTokens = validRefreshTokens.filter(token => token !== refresh_token);
+	res.status(200);
+	return res.send();
+});
+
+router.post('/refreshToken', (req, res) => {
+	try {
+		const refresh_token = req.cookies.refresh_token;
+		const decoded = jwt.verify(refresh_token, process.env.JWT_REFRESH_SECRET);
+
+		if (refresh_token && validRefreshTokens.includes(refresh_token)) {
+			const access_token = jwt.sign({
+				_id: decoded._id,
+				isVerified:  decoded.isVerified
+			},
+			process.env.JWT_ACCESS_SECRET,
+			{
+				expiresIn: '1h'
+			}
+			);
+
+			const oneHourToMilliseconds = 1000 * 60 * 60;
+			
+			res.cookie('access_token', access_token,
+			{
+				maxAge: oneHourToMilliseconds,
+				httpOnly: false,
+				secure: process.env.MODE === 'production' ? true : false,
+				sameSite: 'lax'
+			}
+			);
+
+			res.status(200);
+			return res.send();
+		} else {
+
+			return res.status(403).json({
+				message: 'Auth failed'
+			});
+		}
+	} catch (error) {
+		
+		console.log(error);
+		return res.status(403).json({
+			message: 'Auth failed'
+		});
+	}
+
+});
+
 /**
  * Verify email
  *
@@ -232,7 +295,7 @@ router.get('/verify/:verificationToken', async (req, res) => {
 
 	try {
 		const token = req.params.verificationToken;
-		const decoded = jwt.verify(token, process.env.JWT_KEY);
+		const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 		req.userData = decoded;
 	} catch (error) {
 		return res.status(401).json({
@@ -240,10 +303,7 @@ router.get('/verify/:verificationToken', async (req, res) => {
         });
 	}
 
-	let player = await Player.findOne({
-		email: req.userData.email
-	}).select('+verificationToken');
-
+	let player = await Player.findById(req.userData._id).select('+verificationToken');
 
 	// Email does not exist in database
 	if (player === null) {
@@ -330,26 +390,11 @@ router.put('/updatePersonalInfo', checkAuth, async (req, res) => {
 	try {
 		const updatedPlayer = await player.save();
 
-		const token = jwt.sign({
-			_id: updatedPlayer._id,
-			firstName: updatedPlayer.firstName,
-			lastName: updatedPlayer.lastName,
-			email: updatedPlayer.email,
-			birthday: updatedPlayer.birthday
-		},
-		process.env.JWT_KEY,
-		{
-			expiresIn: '24h'
-		}
-		);
-
-		res.cookie('token', token);
-
 		return res.json(
 		{
-			'favouriteCourse': player.favouriteCourse,
-			'showLatestYearOnly': player.showLatestYearOnly,
-			'recieveAddedToScorecardMail': player.recieveAddedToScorecardMail
+			'favouriteCourse': updatedPlayer.favouriteCourse,
+			'showLatestYearOnly': updatedPlayer.showLatestYearOnly,
+			'recieveAddedToScorecardMail': updatedPlayer.recieveAddedToScorecardMail
 		});
 
 	} catch (error) {
@@ -393,9 +438,46 @@ router.put('/sendVerificationMail', checkAuth, async (req, res) => {
 		let player = await Player.findById(req.userData._id);
 
 		const verificationToken = jwt.sign({
-			email: req.userData.email
+			email: req.userData._id
 		},
-		process.env.JWT_KEY,
+		process.env.JWT_ACCESS_SECRET,
+		{
+			expiresIn: '24h'
+		}
+		);	
+
+		player.verificationToken = verificationToken;
+		player.isVerified = false;
+
+		const updatedPlayer = await player.save();
+
+		if (updatedPlayer) {
+			await EmailService.sendVerificationEmail(
+				'ikkesvar@ronvikfrisbeegolf.no',
+				updatedPlayer.email,
+				updatedPlayer.firstName,
+				verificationToken
+			);
+
+			res.status(200);
+			return res.send();
+		}
+
+	} catch (error) {
+		console.log(error);
+
+		return res.status(500);
+	}
+});
+
+router.put('/sendResetPasswordEmail', async (req, res) => {
+	try {
+		let player = await Player.findById(req.userData._id);
+
+		const verificationToken = jwt.sign({
+			email: req.userData._id
+		},
+		process.env.JWT_ACCESS_SECRET,
 		{
 			expiresIn: '24h'
 		}
