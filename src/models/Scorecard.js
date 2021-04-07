@@ -5,6 +5,9 @@ const ScorecardSchema = mongoose.Schema({
         type: Date,
         required: true
     },
+	weather: {
+		type: String
+	},
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Player',

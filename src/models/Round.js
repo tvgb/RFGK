@@ -15,6 +15,9 @@ const RoundSchema = mongoose.Schema({
         ref: 'Course',
         required: true
     },
+	weather: {
+		type: String	
+	},
     numberOfThrows: {
         type: Number,
         validate: {

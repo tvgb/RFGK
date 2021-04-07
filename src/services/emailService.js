@@ -121,6 +121,88 @@ class EmailService {
 			`
 		});
 	}
+
+	async sendResetPasswordEmail(senderEmail, receiverEmail, accessToken) {
+		let transporter = nodemailer.createTransport({
+			host: 'smtp.domeneshop.no',
+			port: 465,
+			secure: true,
+			auth: {
+				user: process.env.IKKESVAR_EMAIL_USERNAME,
+				pass: process.env.IKKESVAR_EMAIL_PASSWORD
+			}
+		});
+
+		await transporter.sendMail({
+			from: `"Rønvik Frisbeegolfklubb" <${senderEmail}>`,
+			to: receiverEmail,
+			subject: 'Bekreft epostadresse',
+			text: 'For å kunne ta i bruk kontoen din på rønvikfrisbeegolf.no må du bekrefte epostadressen din først.',
+			html: 
+			`
+			<!DOCTYPE html>
+			<html>
+				<head>
+					<meta charset="utf-8">
+					<link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+
+					<style>
+						body {
+							font-family: 'Poppins';
+						}
+
+						#container {
+							margin: 20px 50px;
+						}
+
+						h1 {
+							text-align: center;
+						}
+
+						#resetPasswordBtn {
+							background-color: green;
+							color: white;
+							padding: 14px 25px;
+							border-radius: 3px;
+							text-align: center;
+							text-decoration: none;
+							display: inline-block;
+						}
+
+						#regards {
+							font-size: 0.8em;
+							margin-top: 50px;
+							color: lightslategray;
+						}
+					</style>
+				</head>
+
+				<body>
+					<div id="container">
+						<h1>Tilbakestilling av passord</h1>
+						<p>
+							Hei!
+							<br>
+							<br>
+			
+							Du har bett om å få tilbakestilt passordet ditt. 
+							Trykk på knappen under for å gjøre dette. Knappen under er gyldig i 1 time.
+						</p>
+						<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+			
+						<a id="resetPasswordBtn" href="${process.env.SERVER_URL}/api/player/resetPassword/${accessToken}"> Tilbakestill passordet </a>
+			
+						<p id="regards">
+							Mvh.
+							<br>
+							Rønvik Frisbeegolfklubb
+						</p>
+					</div>
+				</body>
+			</html>
+			`
+		});
+	}
 }
 
 module.exports = new EmailService();
