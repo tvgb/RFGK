@@ -20,7 +20,12 @@ const CourseSchema = mongoose.Schema({
             message: '{Value} is not an integer'
         },
         required: true
-    }
+    },
+	isInactive: {
+		type: Boolean,
+		required: false,
+		default: false
+	}
 });
 
 module.exports = mongoose.model('Course', CourseSchema);
