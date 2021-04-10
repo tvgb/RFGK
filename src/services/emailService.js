@@ -122,7 +122,7 @@ class EmailService {
 		});
 	}
 
-	async sendResetPasswordEmail(senderEmail, receiverEmail, accessToken) {
+	async sendResetPasswordEmail(senderEmail, receiverEmail, receiverName, accessToken) {
 		let transporter = nodemailer.createTransport({
 			host: 'smtp.domeneshop.no',
 			port: 465,
@@ -174,6 +174,10 @@ class EmailService {
 							margin-top: 50px;
 							color: lightslategray;
 						}
+
+						#btn-div {
+							text-align: center;
+						}
 					</style>
 				</head>
 
@@ -181,16 +185,19 @@ class EmailService {
 					<div id="container">
 						<h1>Tilbakestilling av passord</h1>
 						<p>
-							Hei!
+							Hei ${receiverName}
 							<br>
 							<br>
 			
-							Du har bett om å få tilbakestilt passordet ditt. 
-							Trykk på knappen under for å gjøre dette. Knappen under er gyldig i 1 time.
+							Du har bedt om å få tilbakestilt passordet ditt. 
+							Trykk på knappen under for å gjøre dette. Knappen er gyldig i 1 time. Hvis du ikke har bedt om
+							å få tilbakestilt passordet ditt kan du bare ignorere denne eposten.
 						</p>
 						<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
-			
-						<a id="resetPasswordBtn" href="${process.env.SERVER_URL}/api/player/resetPassword/${accessToken}"> Tilbakestill passordet </a>
+						
+						<div id="btn-div">
+							<a id="resetPasswordBtn" href="${process.env.SERVER_URL}/api/player/verifyResetPassword/${accessToken}"> Tilbakestill passordet </a>
+						</div>
 			
 						<p id="regards">
 							Mvh.

@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const checkAuth = require('../middleware/check-auth');
 const Player = require('../../models/Player');
 const EmailService = require('../../services/emailService');
+const { rawListeners } = require('../../models/Player');
+const { ConnectionStates } = require('mongoose');
 
 let validRefreshTokens = [];
 
@@ -433,6 +435,49 @@ router.put('/updateSettings', checkAuth, async (req, res) => {
 	}
 });
 
+router.put('/resetPassword', checkAuth, async (req, res) => {
+
+	res.cookie('access_token', '', {maxAge: 0});	
+	res.cookie('refresh_token', '', {maxAge: 0});	
+
+	try {
+		const query = Player.findById(req.userData._id);
+		query.select('+verificationToken');
+		const player = await query.exec();
+
+		if (player && req.body.password && req.cookies.access_token !== player.verificationToken) {
+
+			bcrypt.hash(req.body.password, 10, async (error, hash) => {
+				if (error) {
+					console.log(error);
+	
+					return res.status(500).json({
+						errorcode: 5
+					});
+				} 
+				
+				player.password = hash;
+				player.isVerified = true;
+				player.verificationToken = req.cookies.access_token;
+				const updatedPlayer = await player.save();
+
+				if (updatedPlayer) {
+					res.status(200);
+					return res.json({
+						email: player.email
+					});
+				} else {
+					return res.sendStatus(500);
+				}
+			});
+		} else {
+			return res.sendStatus(403);
+		}
+	} catch (error) {
+		return res.sendStatus(500);
+	}
+});
+
 router.put('/sendVerificationMail', checkAuth, async (req, res) => {
 	try {
 		let player = await Player.findById(req.userData._id);
@@ -470,39 +515,63 @@ router.put('/sendVerificationMail', checkAuth, async (req, res) => {
 	}
 });
 
+router.get('/verifyResetPassword/:verificationToken', async (req, res) => {
+	try {
+		const token = req.params.verificationToken;
+		const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+		req.userData = decoded;
+
+		const oneHourToMilliseconds = 1000 * 60 * 60;
+		
+		res.cookie('access_token', token,
+		{
+			maxAge: oneHourToMilliseconds,
+			httpOnly: false,
+			secure: process.env.MODE === 'production' ? true : false,
+			sameSite: 'lax'
+		}
+		);
+		
+		res.redirect(`${process.env.FRONTEND_URL}/resetPassword`);
+	} catch (error) {
+		return res.status(401).json({
+            message: 'Account verification failed'
+        });
+	}
+
+});
+
 router.put('/sendResetPasswordEmail', async (req, res) => {
 	try {
-		let player = await Player.findById(req.userData._id);
-
-		const verificationToken = jwt.sign({
-			email: req.userData._id
-		},
-		process.env.JWT_ACCESS_SECRET,
-		{
-			expiresIn: '24h'
-		}
-		);	
-
-		player.verificationToken = verificationToken;
-		player.isVerified = false;
-
-		const updatedPlayer = await player.save();
-
-		if (updatedPlayer) {
-			await EmailService.sendVerificationEmail(
+		const player = await Player.findOne({
+			email: req.body.email
+		});
+		
+		if (player) {
+			const verificationToken = jwt.sign({
+				email: player.email,
+				_id: player._id
+			},
+			process.env.JWT_ACCESS_SECRET,
+			{
+				expiresIn: '24h'
+			}
+			);
+			await EmailService.sendResetPasswordEmail(
 				'ikkesvar@ronvikfrisbeegolf.no',
-				updatedPlayer.email,
-				updatedPlayer.firstName,
+				player.email,
+				player.firstName,
 				verificationToken
 			);
-
-			res.status(200);
-			return res.send();
+		} else {
+			console.log('No player with that email exists!');
 		}
+
+		res.status(200);
+		return res.send();
 
 	} catch (error) {
 		console.log(error);
-
 		return res.status(500);
 	}
 });
