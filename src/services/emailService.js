@@ -178,6 +178,13 @@ class EmailService {
 						#btn-div {
 							text-align: center;
 						}
+
+						#link-div {
+							margin-top: 40px;
+							width: 100%;
+							overflow-wrap: break-word;
+							font-size: 0.9rem;
+						}
 					</style>
 				</head>
 
@@ -197,6 +204,11 @@ class EmailService {
 						
 						<div id="btn-div">
 							<a id="resetPasswordBtn" href="${process.env.SERVER_URL}/api/player/verifyResetPassword/${accessToken}"> Tilbakestill passordet </a>
+						</div>
+
+						<div id="link-div">
+							Hvis knappen ikke fungerer kan du bruke denne linken:
+							<span>${process.env.SERVER_URL}/api/player/verifyResetPassword/${accessToken}</span>
 						</div>
 			
 						<p id="regards">
