@@ -190,15 +190,6 @@ router.post('/login', async (req, res) => {
 					}
 				);
 
-				res.cookie('isVerified', player.isVerified,
-					{
-						maxAge: oneHourToMilliseconds,
-						httpOnly: false,
-						secure: process.env.MODE === 'production' ? true : false,
-						sameSite: 'lax'
-					}
-				);
-
 				res.cookie('refresh_token', refresh_token,
 					{
 						maxAge: hundredAndTwentyDaysToMilliseconds,
@@ -210,10 +201,10 @@ router.post('/login', async (req, res) => {
 				
 				return res.json(
 				{
-					'favouriteCourse': player.favouriteCourse,
-					'showLatestYearOnly': player.showLatestYearOnly,
-					'recieveAddedToScorecardMail': player.recieveAddedToScorecardMail,
-					'isVerified': player.isVerified
+					favouriteCourse: player.favouriteCourse,
+					showLatestYearOnly: player.showLatestYearOnly,
+					recieveAddedToScorecardMail: player.recieveAddedToScorecardMail,
+					isVerified: player.isVerified
 				});
 			}
 
@@ -241,7 +232,7 @@ router.post('/logout', (req, res) => {
 	return res.send();
 });
 
-router.post('/refreshToken', (req, res) => {
+router.post('/refreshToken', async (req, res) => {
 	try {
 		const refresh_token = req.cookies.refresh_token;
 		const decoded = jwt.verify(refresh_token, process.env.JWT_REFRESH_SECRET);
@@ -268,8 +259,17 @@ router.post('/refreshToken', (req, res) => {
 			}
 			);
 
+			const query = Player.findById(decoded._id);
+			query.populate({path: 'favouriteCourse'});
+			const player = await query.exec();
+
 			res.status(200);
-			return res.send();
+			return res.json({
+				isVerified: player.isVerified,
+				favouriteCourse: player.favouriteCourse,
+				recieveAddedToScorecardMail: player.recieveAddedToScorecardMail,
+				showLatestYearOnly: player.showLatestYearOnly
+			});
 		} else {
 
 			return res.status(403).json({
