@@ -349,61 +349,48 @@ router.get('/verify/:verificationToken', async (req, res) => {
  */
 router.put('/updatePersonalInfo', checkAuth, async (req, res) => {
 
-	const query = Player.findById(req.userData._id);
-	query.select('+password');
-	let player = await query.exec();
+	try {
+		const query = Player.findById(req.userData._id);
+		query.select('+password');
+		let player = await query.exec();
 
-	await bcrypt.compare(req.body.oldPassword, player.password, async (error, result) => {
-		if (error) {
-			console.log(error);
+		if (req.body.newPassword && req.body.newPassword.trim() !== '' && req.body.newPassword.length >= 8) {
+			const result = await bcrypt.compare(req.body.oldPassword, player.password);
 
-			return res.status(500).json({
-				errorcode: 5	
-			});
-		}
-
-		if (!result) {
-			return res.status(400).json({
-				errorcode: 2
-			});
-		}
-	});
-
-	if (req.body.newPassword ==! null && req.body.newPassword ==! '' && req.body.newPassword ==! undefined) {
-		bcrypt.hash(req.body.newPassword, 10, (error, hash) => {
-			if (error) {
-				console.log(error);
-
-				return res.status(500).json({
-					errorcode: 5
-				});
-			} 
+			if (!result) {
+				res.status(400);
+				return res.send();
+			}
+	
+			const hash = await bcrypt.hash(req.body.newPassword, 10);
+	
+			if (!hash) {
+				res.status(500);
+				return res.send();
+			}
 
 			player.password = hash;
-		});
-	}
+		}
 
-	if (req.body.newEmail !== null && req.body.newEmail !== undefined && req.body.newEmail.trim() !== '') {
-		player.email = req.body.newEmail.toLowerCase();
-		player.isVerified = false;
-		player.deletePlayerIfNotVerified = false;
-	}
-	
-	try {
+		if (req.body.newEmail && req.body.newEmail.trim() !== '') {
+			player.email = req.body.newEmail.toLowerCase();
+			player.isVerified = false;
+			player.deletePlayerIfNotVerified = false;
+		}
+
 		const updatedPlayer = await player.save();
-
+		res.status(200);
 		return res.json(
-		{
-			'favouriteCourse': updatedPlayer.favouriteCourse,
-			'showLatestYearOnly': updatedPlayer.showLatestYearOnly,
-			'recieveAddedToScorecardMail': updatedPlayer.recieveAddedToScorecardMail
-		});
+			{
+				'favouriteCourse': updatedPlayer.favouriteCourse,
+				'showLatestYearOnly': updatedPlayer.showLatestYearOnly,
+				'recieveAddedToScorecardMail': updatedPlayer.recieveAddedToScorecardMail
+			}
+		);
 
 	} catch (error) {
-
-		return res.status(500).json({
-			errorcode: 5
-		});
+		res.status(500);
+		return res.send();
 	}
 });
 
