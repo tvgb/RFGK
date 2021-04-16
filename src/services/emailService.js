@@ -136,8 +136,8 @@ class EmailService {
 		await transporter.sendMail({
 			from: `"Rønvik Frisbeegolfklubb" <${senderEmail}>`,
 			to: receiverEmail,
-			subject: 'Bekreft epostadresse',
-			text: 'For å kunne ta i bruk kontoen din på rønvikfrisbeegolf.no må du bekrefte epostadressen din først.',
+			subject: 'Tilbakestilling av passord',
+			text: 'Mail med link for å tilbakestille passordet.',
 			html: 
 			`
 			<!DOCTYPE html>
