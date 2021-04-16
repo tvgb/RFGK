@@ -5,10 +5,8 @@ const jwt = require('jsonwebtoken');
 const checkAuth = require('../middleware/check-auth');
 const Player = require('../../models/Player');
 const EmailService = require('../../services/emailService');
-const { rawListeners } = require('../../models/Player');
-const { ConnectionStates } = require('mongoose');
-
-let validRefreshTokens = [];
+const TokenService = require('../../services/tokenService');
+const RevokedRefreshTokens = require('../../models/RevokedRefreshTokens');
 
 // Get all players
 router.get('/', checkAuth, async (req, res) =>  {
@@ -31,11 +29,6 @@ router.get('/:player_id', checkAuth, async (req, res) => {
 	}
 });
 
-/**
- * errorcode: 1 == Wrong secret code
- * errorcode: 2 == Email already exists in database
- * errorcode: 3 == Something went wrong
- */
 router.post('/signup', async (req, res) => {
 
 	if (process.env.SECRET_CODE === req.body.secret_code) {
@@ -46,9 +39,7 @@ router.post('/signup', async (req, res) => {
 
 		// Player with the same email already exists in the database
 		if (player !== null) {
-			return res.status(409).json({
-				errorcode: 2
-			});
+			return res.sendStatus(409);
 
 		} else {
 			bcrypt.hash(req.body.password, 10, async (error, hash) => {
@@ -56,10 +47,7 @@ router.post('/signup', async (req, res) => {
 				// Something went wrong while trying to hash the password
 				if (error) {
 					console.log(error);
-
-					return res.status(500).json({
-						errorcode: 3
-					});
+					return res.sendStatus(500);
 				}
 
 				const verificationToken = jwt.sign({
@@ -92,36 +80,23 @@ router.post('/signup', async (req, res) => {
 							verificationToken
 						);
 
-						return res.status(200).json({
-							message: 'Created new player!'
-						});
+						return res.sendStatus(200);
 					}
 
 
 				} catch (error) {
 					console.log(error);
 
-					// Something went wrong while storing the new player in the database
-					return res.status(500).json({
-						errorcode: 3
-					});
+					return res.sendStatus(500);
 				}
 			});
 		}
 	} else {
 		// Wrong secret code
-		return res.status(418).json({
-			errorcode: 1
-		});
+		return res.sendStatus(418);
 	}
 });
 
-/**
- * errorcode: 1 == Wrong email or password
- * errorcode: 2 == Auth failed while trying to compare hashes
- * errorcode: 3 == Something went wrong
- * errorcode: 4 == Account not verified
- */
 router.post('/login', async (req, res) => {
 
 	try {
@@ -138,9 +113,7 @@ router.post('/login', async (req, res) => {
 
 		// Email does not exist in database
 		if (player === null) {
-			return res.status(400).json({
-				errorcode: 1
-			});
+			return res.sendStatus(400);
 		}
 
 		// Compare password with password in database, and return signed token if equal
@@ -149,115 +122,73 @@ router.post('/login', async (req, res) => {
 			// Something went wrong while trying to compare hashes
 			if (error) {
 				console.log(error);
-
-				return res.status(401).json({
-					errorcode: 2
-				});
+				return res.sendStatus(401);
 			}
 
 			if (result) {
-				const access_token = jwt.sign({
-					_id: player._id,
-					isVerified:  player.isVerified
-				},
-				process.env.JWT_ACCESS_SECRET,
-				{
-					expiresIn: '1h'
-				}
-				);
+				const access_token = TokenService.createAccessToken(player);
+				const refresh_token = TokenService.createRefreshToken(player);
 
-				const refresh_token = jwt.sign({
-					_id: player._id
-				},
-				process.env.JWT_REFRESH_SECRET,
-				{
-					expiresIn: '120d'
-				}
-				);
-
-				validRefreshTokens.push(refresh_token);
-
-				// Our token expires after one day
-				const oneHourToMilliseconds = 1000 * 60 * 60;
-				const hundredAndTwentyDaysToMilliseconds = 1000 * 60 * 60 * 24 * 120;
-
-				res.cookie('access_token', access_token,
-					{
-						maxAge: oneHourToMilliseconds,
-						httpOnly: false,
-						secure: process.env.MODE === 'production' ? true : false,
-						sameSite: 'lax'
-					}
-				);
-
-				res.cookie('refresh_token', refresh_token,
-					{
-						maxAge: hundredAndTwentyDaysToMilliseconds,
-						httpOnly: false,
-						secure: process.env.MODE === 'production' ? true : false,
-						sameSite: 'lax'
-					}
-				);
-				
-				return res.json(
+				res.cookie('access_token', access_token, TokenService.createAccessTokenCookieOptionsObj());
+				res.cookie('refresh_token', refresh_token, TokenService.createRefreshTokenCookieOptionsObj());
+				res.status(200);
+				res.json(
 				{
 					favouriteCourse: player.favouriteCourse,
 					showLatestYearOnly: player.showLatestYearOnly,
 					recieveAddedToScorecardMail: player.recieveAddedToScorecardMail,
 					isVerified: player.isVerified
 				});
+				return res.send();
 			}
 
 			// Password was incorrect
-			return res.status(400).json({
-				errorcode: 1
-			});
+			return res.sendStatus(400);
 		});
 
 	} catch (error) {
-
 		// Something went wrong while trying to get player from database
 		console.log(error);
-
-		return res.status(500).json({
-			errorcode: 3
-		});
+		return res.sendStatus(500);
 	}
 });
 
-router.post('/logout', (req, res) => {
+router.post('/logout', async (req, res) => {
 	const refresh_token = req.cookies.refresh_token;
-	validRefreshTokens = validRefreshTokens.filter(token => token !== refresh_token);
-	res.status(200);
-	return res.send();
+
+	try {
+		jwt.verify(refresh_token, process.env.JWT_REFRESH_SECRET);
+		const revokedTokens = await RevokedRefreshTokens.findOne();
+		const newRevokedTokens = revokedTokens.tokens.filter((token) => {
+			try {
+				jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+				return token;
+			} catch (error) {
+				// do noting
+			}
+		});
+
+		revokedTokens.tokens = [...newRevokedTokens, refresh_token];
+		revokedTokens.save();
+
+	} catch (error) {
+		// do nothing		
+	}
+
+	return res.sendStatus(200);
 });
 
 router.post('/refreshToken', async (req, res) => {
 	try {
 		const refresh_token = req.cookies.refresh_token;
 		const decoded = jwt.verify(refresh_token, process.env.JWT_REFRESH_SECRET);
+		const revokedTokens = await RevokedRefreshTokens.findOne();
 
-		if (refresh_token && validRefreshTokens.includes(refresh_token)) {
-			const access_token = jwt.sign({
-				_id: decoded._id,
-				isVerified:  decoded.isVerified
-			},
-			process.env.JWT_ACCESS_SECRET,
-			{
-				expiresIn: '1h'
-			}
-			);
 
-			const oneHourToMilliseconds = 1000 * 60 * 60;
-			
-			res.cookie('access_token', access_token,
-			{
-				maxAge: oneHourToMilliseconds,
-				httpOnly: false,
-				secure: process.env.MODE === 'production' ? true : false,
-				sameSite: 'lax'
-			}
-			);
+		if (refresh_token && (!revokedTokens || !revokedTokens.tokens.includes(refresh_token))) {
+
+			const access_token = TokenService.createAccessToken({_id: decoded._id});
+			res.cookie('access_token', access_token, TokenService.createAccessTokenCookieOptionsObj());
 
 			const query = Player.findById(decoded._id);
 			query.populate({path: 'favouriteCourse'});
@@ -271,28 +202,15 @@ router.post('/refreshToken', async (req, res) => {
 				showLatestYearOnly: player.showLatestYearOnly
 			});
 		} else {
-
-			return res.status(403).json({
-				message: 'Auth failed'
-			});
+			return res.sendStatus(403);
 		}
 	} catch (error) {
-		
 		console.log(error);
-		return res.status(403).json({
-			message: 'Auth failed'
-		});
+		return res.sendStatus(403);
 	}
 
 });
 
-/**
- * Verify email
- *
- * errorcode: 1 == Wrong email
- * errorcode: 2 == Auth failed while trying to compare hashes
- * errorcode: 3 == Something went wrong
- */
 router.get('/verify/:verificationToken', async (req, res) => {
 
 	try {
@@ -300,18 +218,14 @@ router.get('/verify/:verificationToken', async (req, res) => {
 		const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 		req.userData = decoded;
 	} catch (error) {
-		return res.status(401).json({
-            message: 'Account verification failed'
-        });
+		return res.sendStatus(401);
 	}
 
 	let player = await Player.findById(req.userData._id).select('+verificationToken');
 
 	// Email does not exist in database
 	if (player === null) {
-		return res.status(400).json({
-			errorcode: 1
-		});
+		return res.sendStatus(400);
 	}
 
 	if (player.isVerified) {
@@ -329,24 +243,13 @@ router.get('/verify/:verificationToken', async (req, res) => {
 		} catch (error) {
 			console.log(error);
 
-			return res.status(500).json({
-				errorcode: 3
-			});
+			return res.sendStatus(500);
 		}
 	} else {
-		return res.status(401).json({
-            message: 'Account verification failed'
-        });
+		return res.sendStatus(400);
 	}
 });
 
-/**
- * errorcode: 1 == No player with that id in database
- * errorcode: 2 == Wrong old password
- * errorcode: 3 == Failed hashing old password
- * errorcode: 4 == Failed while updating info
- * errorcode: 5 == Something went wrong
- */
 router.put('/updatePersonalInfo', checkAuth, async (req, res) => {
 
 	try {
@@ -358,15 +261,13 @@ router.put('/updatePersonalInfo', checkAuth, async (req, res) => {
 			const result = await bcrypt.compare(req.body.oldPassword, player.password);
 
 			if (!result) {
-				res.status(400);
-				return res.send();
+				return res.sendStatus(400);
 			}
 	
 			const hash = await bcrypt.hash(req.body.newPassword, 10);
 	
 			if (!hash) {
-				res.status(500);
-				return res.send();
+				return res.sendStatus(500);
 			}
 
 			player.password = hash;
@@ -389,8 +290,7 @@ router.put('/updatePersonalInfo', checkAuth, async (req, res) => {
 		);
 
 	} catch (error) {
-		res.status(500);
-		return res.send();
+		return res.sendStatus(500);
 	}
 });
 
@@ -417,8 +317,7 @@ router.put('/updateSettings', checkAuth, async (req, res) => {
 
 	} catch (error) {
 		console.log(error);
-
-		return res.status(500);
+		return res.sendStatus(500);
 	}
 });
 
@@ -437,10 +336,7 @@ router.put('/resetPassword', checkAuth, async (req, res) => {
 			bcrypt.hash(req.body.password, 10, async (error, hash) => {
 				if (error) {
 					console.log(error);
-	
-					return res.status(500).json({
-						errorcode: 5
-					});
+					return res.sendStatus(500);
 				} 
 				
 				player.password = hash;
@@ -491,14 +387,12 @@ router.put('/sendVerificationMail', checkAuth, async (req, res) => {
 				verificationToken
 			);
 
-			res.status(200);
-			return res.send();
+			return res.sendStatus(200);
 		}
 
 	} catch (error) {
 		console.log(error);
-
-		return res.status(500);
+		return res.sendStatus(500);
 	}
 });
 
@@ -508,22 +402,11 @@ router.get('/verifyResetPassword/:verificationToken', async (req, res) => {
 		const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 		req.userData = decoded;
 
-		const oneHourToMilliseconds = 1000 * 60 * 60;
-		
-		res.cookie('access_token', token,
-		{
-			maxAge: oneHourToMilliseconds,
-			httpOnly: false,
-			secure: process.env.MODE === 'production' ? true : false,
-			sameSite: 'lax'
-		}
-		);
+		res.cookie('access_token', token, TokenService.createAccessTokenCookieOptionsObj());
 		
 		res.redirect(`${process.env.FRONTEND_URL}/resetPassword`);
 	} catch (error) {
-		return res.status(401).json({
-            message: 'Account verification failed'
-        });
+		return res.sendStatus(401);
 	}
 
 });
@@ -554,13 +437,14 @@ router.put('/sendResetPasswordEmail', async (req, res) => {
 			console.log('No player with that email exists!');
 		}
 
-		res.status(200);
-		return res.send();
+		res.sendStatus(200);
 
 	} catch (error) {
 		console.log(error);
-		return res.status(500);
+		return res.sendStatus(500);
 	}
 });
+
+
 
 module.exports = router;
