@@ -14,87 +14,119 @@ router.get('/', checkAuth, async (req, res) =>  {
 		const players = await Player.find();
 		return res.json(players);
 	} catch (error) {
-		res.json(error);
+		return res.sendStatus(500);
+	}
+});
+
+// Get all unverified players
+router.get('/unverified', checkAuth, async (req, res) => {
+	try {
+		const requestingPlayer = await Player.findById(req.userData._id);
+
+		console.log(requestingPlayer);
+
+		if (requestingPlayer && requestingPlayer.admin) {
+			const players = await Player.find({
+				isVerified: false
+			});
+	
+			return res.json(players);
+		} else {
+			return res.json([]);
+		}
+
+	} catch (error) {
+		return res.sendStatus(500);
 	}
 });
 
 // Get player with id "player_id"
 router.get('/:player_id', checkAuth, async (req, res) => {
 	const playerId = req.params.player_id;
+	console.log(playerId);
 	try {
 		const player = await Player.findById(playerId);
 		return res.json(player);
 	} catch (error) {
-		res.json(error);
+		console.log('yes');
+		return res.sendStatus(500);
 	}
 });
 
 router.post('/signup', async (req, res) => {
 
-	if (process.env.SECRET_CODE === req.body.secret_code) {
+	// if (process.env.SECRET_CODE === req.body.secret_code) {
 
-		const player = await Player.findOne({
-			email: req.body.email
-		});
+	const player = await Player.findOne({
+		email: req.body.email
+	});
 
-		// Player with the same email already exists in the database
-		if (player !== null) {
-			return res.sendStatus(409);
+	// Player with the same email already exists in the database
+	if (player !== null) {
+		return res.sendStatus(409);
 
-		} else {
-			bcrypt.hash(req.body.password, 10, async (error, hash) => {
+	} else {
+		bcrypt.hash(req.body.password, 10, async (error, hash) => {
 
-				// Something went wrong while trying to hash the password
-				if (error) {
-					console.log(error);
-					return res.sendStatus(500);
-				}
+			// Something went wrong while trying to hash the password
+			if (error) {
+				console.log(error);
+				return res.sendStatus(500);
+			}
 
-				const verificationToken = jwt.sign({
-					email: req.body.email
-				},
-				process.env.JWT_ACCESS_SECRET,
-				{
-					expiresIn: '24h'
-				}
-				);
+			const verificationToken = jwt.sign({
+				email: req.body.email
+			},
+			process.env.JWT_ACCESS_SECRET,
+			{
+				expiresIn: '24h'
+			}
+			);
 
-				const newPlayer = new Player({
-					firstName: req.body.firstName,
-					lastName: req.body.lastName,
-					email: req.body.email,
-					password: hash,
-					birthday: req.body.birthday,
-					verificationToken: verificationToken,
-					deletePlayerIfNotVerified: true
-				});
+			const newPlayer = new Player({
+				firstName: req.body.firstName,
+				lastName: req.body.lastName,
+				email: req.body.email,
+				password: hash,
+				birthday: req.body.birthday,
+				verificationToken: verificationToken,
+				deletePlayerIfNotVerified: true
+			});
 
-				try {
+			try {
+				
+				EmailService.sendVerificationEmail(
+					'ikkesvar@ronvikfrisbeegolf.no',
+					newPlayer.email,
+					newPlayer.firstName,
+					verificationToken
+				).then( async () => {
 					const newPlayerSavedSuccessfully = await newPlayer.save();
-
 					if (newPlayerSavedSuccessfully) {
-						await EmailService.sendVerificationEmail(
-							'ikkesvar@ronvikfrisbeegolf.no',
-							newPlayer.email,
-							newPlayer.firstName,
-							verificationToken
-						);
-
 						return res.sendStatus(200);
+					} else {
+						return res.sendStatus(500);
+					}
+				}).catch((error) => {
+					if (error.responseCode === 550) {
+						return res.sendStatus(422);
 					}
 
-
-				} catch (error) {
-					console.log(error);
-
 					return res.sendStatus(500);
-				}
-			});
-		}
-	} else {
-		// Wrong secret code
-		return res.sendStatus(418);
+				});
+
+
+			} catch (error) {
+				console.log(error);
+
+				return res.sendStatus(500);
+			}
+		});
 	}
+	// } else {
+	// 	// Wrong secret code
+	// 	return res.sendStatus(418);
+	// }
 });
 
 router.post('/login', async (req, res) => {
@@ -137,7 +169,8 @@ router.post('/login', async (req, res) => {
 					favouriteCourse: player.favouriteCourse,
 					showLatestYearOnly: player.showLatestYearOnly,
 					recieveAddedToScorecardMail: player.recieveAddedToScorecardMail,
-					isVerified: player.isVerified
+					isVerified: player.isVerified,
+					admin: player.admin
 				});
 				return res.send();
 			}
@@ -199,7 +232,8 @@ router.post('/refreshToken', async (req, res) => {
 				isVerified: player.isVerified,
 				favouriteCourse: player.favouriteCourse,
 				recieveAddedToScorecardMail: player.recieveAddedToScorecardMail,
-				showLatestYearOnly: player.showLatestYearOnly
+				showLatestYearOnly: player.showLatestYearOnly,
+				admin: player.admin
 			});
 		} else {
 			return res.sendStatus(403);
@@ -220,8 +254,13 @@ router.get('/verify/:verificationToken', async (req, res) => {
 	} catch (error) {
 		return res.sendStatus(401);
 	}
-
-	let player = await Player.findById(req.userData._id).select('+verificationToken');
+	const query = Player.findOne({
+		email: req.userData.email
+	});
+	
+	query.select('+verificationToken');
+	
+	let player = await query.exec();
 
 	// Email does not exist in database
 	if (player === null) {
@@ -229,7 +268,7 @@ router.get('/verify/:verificationToken', async (req, res) => {
 	}
 
 	if (player.isVerified) {
-		return res.redirect(process.env.FRONTEND_URL);
+		return res.redirect(`${process.env.FRONTEND_URL}/login?email=${req.userData.email}`);
 	}
 
 	if (player.verificationToken === req.params.verificationToken) {
@@ -238,8 +277,10 @@ router.get('/verify/:verificationToken', async (req, res) => {
 
 		try {
 			await player.save();
-
-			return res.redirect(process.env.FRONTEND_URL);
+			res.json({
+				email: req.userData.email
+			});
+			return res.redirect(`${process.env.FRONTEND_URL}/login?email=${req.userData.email}`);
 		} catch (error) {
 			console.log(error);
 
@@ -365,14 +406,7 @@ router.put('/sendVerificationMail', checkAuth, async (req, res) => {
 	try {
 		let player = await Player.findById(req.userData._id);
 
-		const verificationToken = jwt.sign({
-			email: req.userData._id
-		},
-		process.env.JWT_ACCESS_SECRET,
-		{
-			expiresIn: '24h'
-		}
-		);	
+		const verificationToken = TokenService.createAccessToken(player);
 
 		player.verificationToken = verificationToken;
 		player.isVerified = false;
@@ -418,15 +452,8 @@ router.put('/sendResetPasswordEmail', async (req, res) => {
 		});
 		
 		if (player) {
-			const verificationToken = jwt.sign({
-				email: player.email,
-				_id: player._id
-			},
-			process.env.JWT_ACCESS_SECRET,
-			{
-				expiresIn: '24h'
-			}
-			);
+			const verificationToken = TokenService.createAccessToken(player);
+ 
 			await EmailService.sendResetPasswordEmail(
 				'ikkesvar@ronvikfrisbeegolf.no',
 				player.email,

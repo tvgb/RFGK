@@ -55,7 +55,13 @@ const PlayerSchema = mongoose.Schema({
         required: true,
         default: false,
         select: false
-    }
+    },
+	isVerifiedByAdmin: {
+		type: Boolean,
+		required: true,
+		default: false,
+		select: false
+	}
 });
 
 module.exports = mongoose.model('Player', PlayerSchema);

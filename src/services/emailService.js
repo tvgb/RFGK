@@ -86,6 +86,10 @@ class EmailService {
 							text-decoration: none;
 							display: inline-block;
 						}
+						
+						#btn-div {
+							text-align: center;
+						}
 
 						#regards {
 							font-size: 0.8em;
@@ -108,8 +112,9 @@ class EmailService {
 						</p>
 						<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
 
-						<a id="verifyBtn" href="${process.env.SERVER_URL}/api/player/verify/${verificationToken}"> Bekreft epost </a>
-
+						<div id="btn-div">
+							<a id="verifyBtn" href="${process.env.SERVER_URL}/api/player/verify/${verificationToken}"> Bekreft epost </a>
+						</div>
 						<p id="regards">
 							Mvh.
 							<br>
