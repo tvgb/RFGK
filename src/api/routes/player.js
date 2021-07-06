@@ -23,11 +23,9 @@ router.get('/unverified', checkAuth, async (req, res) => {
 	try {
 		const requestingPlayer = await Player.findById(req.userData._id);
 
-		console.log(requestingPlayer);
-
 		if (requestingPlayer && requestingPlayer.admin) {
 			const players = await Player.find({
-				isVerified: false
+				isVerifiedByAdmin: [false, undefined, null]
 			});
 	
 			return res.json(players);
@@ -43,12 +41,10 @@ router.get('/unverified', checkAuth, async (req, res) => {
 // Get player with id "player_id"
 router.get('/:player_id', checkAuth, async (req, res) => {
 	const playerId = req.params.player_id;
-	console.log(playerId);
 	try {
 		const player = await Player.findById(playerId);
 		return res.json(player);
 	} catch (error) {
-		console.log('yes');
 		return res.sendStatus(500);
 	}
 });
@@ -90,7 +86,8 @@ router.post('/signup', async (req, res) => {
 				password: hash,
 				birthday: req.body.birthday,
 				verificationToken: verificationToken,
-				deletePlayerIfNotVerified: true
+				deletePlayerIfNotVerified: true,
+				isVerifiedByAdmin: false
 			});
 
 			try {
@@ -139,12 +136,17 @@ router.post('/login', async (req, res) => {
 		});
 		
 		query.select('+password');
+		query.select('+isVerifiedByAdmin');
 		query.populate({path: 'favouriteCourse'});
 		
 		let player = await query.exec();
 
 		// Email does not exist in database
 		if (player === null) {
+			return res.sendStatus(400);
+		}
+
+		if (!player.isVerified) {
 			return res.sendStatus(400);
 		}
 
@@ -160,7 +162,7 @@ router.post('/login', async (req, res) => {
 			if (result) {
 				const access_token = TokenService.createAccessToken(player);
 				const refresh_token = TokenService.createRefreshToken(player);
-
+				console.log(player.isVerifiedByAdmin);
 				res.cookie('access_token', access_token, TokenService.createAccessTokenCookieOptionsObj());
 				res.cookie('refresh_token', refresh_token, TokenService.createRefreshTokenCookieOptionsObj());
 				res.status(200);
@@ -170,7 +172,8 @@ router.post('/login', async (req, res) => {
 					showLatestYearOnly: player.showLatestYearOnly,
 					recieveAddedToScorecardMail: player.recieveAddedToScorecardMail,
 					isVerified: player.isVerified,
-					admin: player.admin
+					admin: player.admin,
+					isVerifiedByAdmin: player.isVerifiedByAdmin
 				});
 				return res.send();
 			}
@@ -224,6 +227,7 @@ router.post('/refreshToken', async (req, res) => {
 			res.cookie('access_token', access_token, TokenService.createAccessTokenCookieOptionsObj());
 
 			const query = Player.findById(decoded._id);
+			query.select('+isVerifiedByAdmin');
 			query.populate({path: 'favouriteCourse'});
 			const player = await query.exec();
 
@@ -233,7 +237,8 @@ router.post('/refreshToken', async (req, res) => {
 				favouriteCourse: player.favouriteCourse,
 				recieveAddedToScorecardMail: player.recieveAddedToScorecardMail,
 				showLatestYearOnly: player.showLatestYearOnly,
-				admin: player.admin
+				admin: player.admin,
+				isVerifiedByAdmin: player.isVerifiedByAdmin
 			});
 		} else {
 			return res.sendStatus(403);
@@ -245,6 +250,40 @@ router.post('/refreshToken', async (req, res) => {
 
 });
 
+router.put('/verifyplayer', checkAuth, async (req, res) => {
+	try {
+		const adminPlayer = await Player.findById(req.userData);
+		if (!adminPlayer.admin) {
+			return res.sendStatus(400);
+		}
+
+		const player = await Player.findById(req.body._id);
+		player.isVerifiedByAdmin = true;
+		await player.save();
+		return res.sendStatus(200);
+
+	} catch (error) {
+		console.log(error);
+		return res.sendStatus(500);
+	}
+});
+
+router.put('/deleteplayer', checkAuth, async (req, res) => {
+	try {
+		const adminPlayer = await Player.findById(req.userData);
+		if (!adminPlayer.admin) {
+			return res.sendStatus(400);
+		}
+
+		const player = await Player.findById(req.body._id);
+		player.delete();
+		return res.sendStatus(200);
+
+	} catch (error) {
+		console.log(error);
+		return res.sendStatus(500);
+	}
+});
 router.get('/verify/:verificationToken', async (req, res) => {
 
 	try {

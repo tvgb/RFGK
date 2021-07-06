@@ -109,11 +109,16 @@ class EmailService {
 
 							For å kunne ta i bruk kontoen din på rønvikfrisbeegolf.no må du bekrefte epostadressen din først.
 							Dette gjør du ved å trykke på knappen under. Knappen vil være gyldig i 24 timer.
+
+							<br>
+							<br>
+
+							Funksjonalitet for å legge til egne runder vil bli tilgjengelig for deg når en administrator har verifisert profilen din.
 						</p>
 						<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
 
 						<div id="btn-div">
-							<a id="verifyBtn" href="${process.env.SERVER_URL}/api/player/verify/${verificationToken}"> Bekreft epost </a>
+						<a id="verifyBtn" href="${process.env.SERVER_URL}/api/player/verify/${verificationToken}" style="color: white"> Bekreft epost </a>
 						</div>
 						<p id="regards">
 							Mvh.
