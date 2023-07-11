@@ -9,10 +9,21 @@ const TokenService = require('../../services/tokenService');
 const RevokedRefreshTokens = require('../../models/RevokedRefreshTokens');
 
 // Get all players
-router.get('/', checkAuth, async (req, res) =>  {
+router.get('/', checkAuth, async (req, res) => {
 	try {
 		const players = await Player.find();
 		return res.json(players);
+	} catch (error) {
+		res.json(error);
+	}
+});
+
+router.get('/current', checkAuth, async (req, res) => {
+	const playerId = req.userData._id;
+
+	try {
+		const player = await Player.findById(playerId);
+		return res.json(player);
 	} catch (error) {
 		res.json(error);
 	}
@@ -53,10 +64,10 @@ router.post('/signup', async (req, res) => {
 				const verificationToken = jwt.sign({
 					email: req.body.email
 				},
-				process.env.JWT_ACCESS_SECRET,
-				{
-					expiresIn: '24h'
-				}
+					process.env.JWT_ACCESS_SECRET,
+					{
+						expiresIn: '24h'
+					}
 				);
 
 				const newPlayer = new Player({
@@ -105,10 +116,10 @@ router.post('/login', async (req, res) => {
 		const query = Player.findOne({
 			email: email
 		});
-		
+
 		query.select('+password');
-		query.populate({path: 'favouriteCourse'});
-		
+		query.populate({ path: 'favouriteCourse' });
+
 		let player = await query.exec();
 
 		// Email does not exist in database
@@ -133,12 +144,12 @@ router.post('/login', async (req, res) => {
 				res.cookie('refresh_token', refresh_token, TokenService.createRefreshTokenCookieOptionsObj());
 				res.status(200);
 				res.json(
-				{
-					favouriteCourse: player.favouriteCourse,
-					showLatestYearOnly: player.showLatestYearOnly,
-					recieveAddedToScorecardMail: player.recieveAddedToScorecardMail,
-					isVerified: player.isVerified
-				});
+					{
+						favouriteCourse: player.favouriteCourse,
+						showLatestYearOnly: player.showLatestYearOnly,
+						recieveAddedToScorecardMail: player.recieveAddedToScorecardMail,
+						isVerified: player.isVerified
+					});
 				return res.send();
 			}
 
@@ -187,11 +198,11 @@ router.post('/refreshToken', async (req, res) => {
 
 		if (refresh_token && (!revokedTokens || !revokedTokens.tokens.includes(refresh_token))) {
 
-			const access_token = TokenService.createAccessToken({_id: decoded._id});
+			const access_token = TokenService.createAccessToken({ _id: decoded._id });
 			res.cookie('access_token', access_token, TokenService.createAccessTokenCookieOptionsObj());
 
 			const query = Player.findById(decoded._id);
-			query.populate({path: 'favouriteCourse'});
+			query.populate({ path: 'favouriteCourse' });
 			const player = await query.exec();
 
 			res.status(200);
@@ -263,9 +274,9 @@ router.put('/updatePersonalInfo', checkAuth, async (req, res) => {
 			if (!result) {
 				return res.sendStatus(400);
 			}
-	
+
 			const hash = await bcrypt.hash(req.body.newPassword, 10);
-	
+
 			if (!hash) {
 				return res.sendStatus(500);
 			}
@@ -309,11 +320,11 @@ router.put('/updateSettings', checkAuth, async (req, res) => {
 		await player.save();
 
 		return res.json(
-		{
-			'favouriteCourse': player.favouriteCourse,
-			'showLatestYearOnly': player.showLatestYearOnly,
-			'recieveAddedToScorecardMail': player.recieveAddedToScorecardMail
-		});
+			{
+				'favouriteCourse': player.favouriteCourse,
+				'showLatestYearOnly': player.showLatestYearOnly,
+				'recieveAddedToScorecardMail': player.recieveAddedToScorecardMail
+			});
 
 	} catch (error) {
 		console.log(error);
@@ -323,8 +334,8 @@ router.put('/updateSettings', checkAuth, async (req, res) => {
 
 router.put('/resetPassword', checkAuth, async (req, res) => {
 
-	res.cookie('access_token', '', {maxAge: 0});	
-	res.cookie('refresh_token', '', {maxAge: 0});	
+	res.cookie('access_token', '', { maxAge: 0 });
+	res.cookie('refresh_token', '', { maxAge: 0 });
 
 	try {
 		const query = Player.findById(req.userData._id);
@@ -337,8 +348,8 @@ router.put('/resetPassword', checkAuth, async (req, res) => {
 				if (error) {
 					console.log(error);
 					return res.sendStatus(500);
-				} 
-				
+				}
+
 				player.password = hash;
 				player.isVerified = true;
 				player.verificationToken = req.cookies.access_token;
@@ -368,11 +379,11 @@ router.put('/sendVerificationMail', checkAuth, async (req, res) => {
 		const verificationToken = jwt.sign({
 			email: req.userData._id
 		},
-		process.env.JWT_ACCESS_SECRET,
-		{
-			expiresIn: '24h'
-		}
-		);	
+			process.env.JWT_ACCESS_SECRET,
+			{
+				expiresIn: '24h'
+			}
+		);
 
 		player.verificationToken = verificationToken;
 		player.isVerified = false;
@@ -403,7 +414,7 @@ router.get('/verifyResetPassword/:verificationToken', async (req, res) => {
 		req.userData = decoded;
 
 		res.cookie('access_token', token, TokenService.createAccessTokenCookieOptionsObj());
-		
+
 		res.redirect(`${process.env.FRONTEND_URL}/resetPassword`);
 	} catch (error) {
 		return res.sendStatus(401);
@@ -416,16 +427,16 @@ router.put('/sendResetPasswordEmail', async (req, res) => {
 		const player = await Player.findOne({
 			email: req.body.email
 		});
-		
+
 		if (player) {
 			const verificationToken = jwt.sign({
 				email: player.email,
 				_id: player._id
 			},
-			process.env.JWT_ACCESS_SECRET,
-			{
-				expiresIn: '24h'
-			}
+				process.env.JWT_ACCESS_SECRET,
+				{
+					expiresIn: '24h'
+				}
 			);
 			await EmailService.sendResetPasswordEmail(
 				'ikkesvar@ronvikfrisbeegolf.no',

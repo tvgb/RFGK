@@ -22,6 +22,7 @@ app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_KEY));
 //app.use(morgan('comine'));
 
+
 const cors_config = {
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -44,7 +45,6 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
-    console.log(req.body);
 
     return res.status(200).json({
         message: 'testing 123'
@@ -52,22 +52,22 @@ app.post('/', (req, res) => {
 });
 
 app.use((req, res, next) => {
-   const error = new Error('Not found');
-   error.status = 404;
-   next(error);
+    const error = new Error('Not found');
+    error.status = 404;
+    next(error);
 });
 
 app.use((error, req, res) => {
-   res.status(error.status || 500);
-   res.json({
-       error: {
-           message: error.message
-       }
-   });
+    res.status(error.status || 500);
+    res.json({
+        error: {
+            message: error.message
+        }
+    });
 });
 
 // Connect mongoose to MongoDB database
-mongoose.connect(process.env.DB_CONNECTION_STRING, { useNewUrlParser: true,  useUnifiedTopology: true  }, () => 
+mongoose.connect(process.env.DB_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true }, () =>
     console.log('Connected to DB!')
 );
 

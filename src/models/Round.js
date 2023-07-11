@@ -15,9 +15,9 @@ const RoundSchema = mongoose.Schema({
         ref: 'Course',
         required: true
     },
-	weather: {
-		type: String	
-	},
+    weather: {
+        type: String
+    },
     numberOfThrows: {
         type: Number,
         validate: {
@@ -25,6 +25,9 @@ const RoundSchema = mongoose.Schema({
             message: '{Value} is not an integer'
         },
         required: true
+    },
+    handicapRating: {
+        type: Number,
     },
 });
 module.exports = mongoose.model('Round', RoundSchema);
