@@ -55,7 +55,22 @@ const PlayerSchema = mongoose.Schema({
         required: true,
         default: false,
         select: false
-    }
+    },
+    engaHandicapRating: {
+        type: Number,
+        required: false,
+        default: undefined
+    },
+    engaLHI: {
+        type: Number,
+        required: false,
+        default: undefined
+    },
+    engaLHICalculationDate: {
+        type: Date,
+        required: false,
+        default: undefined
+    },
 });
 
 module.exports = mongoose.model('Player', PlayerSchema);

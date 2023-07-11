@@ -3,16 +3,18 @@ const router = express.Router();
 const Round = require('../../models/Round');
 const Scorecard = require('../../models/Scorecard');
 const checkAuth = require('../middleware/check-auth');
+const Player = require('../../models/Player');
+
 const moment = require('moment');
 
 
 // GET all existing scorecards.
-router.get('/', async (req, res) =>  {
+router.get('/', async (req, res) => {
 
 	try {
 		const query = Scorecard.find({});
-		
-		query.sort({'datetime': -1});
+
+		query.sort({ 'datetime': -1 });
 		query.populate({ path: 'createdBy' });
 		query.populate({ path: 'course' });
 		query.populate({
@@ -32,7 +34,7 @@ router.get('/', async (req, res) =>  {
 
 			query.where('datetime').gte(startDate).lte(endDate);
 		}
-		
+
 		// Get round by course if optional query param course is set
 		if (req.query.courseId && req.query.courseId !== 'all') {
 			const courseId = req.query.courseId;
@@ -42,7 +44,7 @@ router.get('/', async (req, res) =>  {
 		}
 
 		const scorecards = await query.exec();
-  
+
 		return res.status(200).json(scorecards);
 
 
@@ -58,12 +60,12 @@ router.get('/', async (req, res) =>  {
 router.post('/', checkAuth, async (req, res) => {
 
 	try {
+		const authenticatedPlayer = await Player.findById(req.userData._id);
 
-		// IMPLEMETER EN EKTE SJEKK FOR VERIFISERTE BRUKERE
-		// if (!req.userData.isVerified) {
-		// 	res.status(405);
-		// 	return res.send();
-		// }
+		if (!authenticatedPlayer.isVerified) {
+			res.status(405);
+			return res.send();
+		}
 
 		let roundIds = [];
 		const course = req.body.course;
@@ -75,14 +77,81 @@ router.post('/', checkAuth, async (req, res) => {
 				weather: req.body.weather,
 				player: round.player._id,
 				course: course._id,
-				numberOfThrows: course.par + round.sum 
+				numberOfThrows: course.par + round.sum
 			});
-	
+
+			const player = await Player.findById(round.player._id);
+
+			if (course._id === '62b4199accd73fe51e870525' && player.engaHandicapRating) {
+				newRound.handicapRating = player.engaHandicapRating;
+			}
+
 			const savedNewRound = await newRound.save();
-	
 			roundIds.push(savedNewRound._id);
+
+			// Calculate new handicap rating for player if round is played on Enga
+
+			if (course._id !== '62b4199accd73fe51e870525') {
+				continue;
+			}
+
+			const query = Round.find();
+			query.sort({ 'datetime': 1 });
+			query.populate({ path: 'course' });
+			query.where({
+				'course': '62b4199accd73fe51e870525', // Enga course id,
+				'player': round.player._id
+			});
+			query.limit(20);
+
+			const allPlayerRoundsOnEnga = await query.exec();
+
+			// Handicap rating cannot be calculated if player has less than 3 rounds on Enga
+			if (allPlayerRoundsOnEnga.length < 3) {
+				continue;
+			}
+
+			const engaHandicapRating = calculateHandicapRating(allPlayerRoundsOnEnga);
+
+			// LHI cannot be calculated if player has less than 20 rounds on Enga
+			if (allPlayerRoundsOnEnga.length < 20) {
+				player.engaHandicapRating = engaHandicapRating;
+				await player.save();
+				continue;
+			}
+
+			if (!player.engaLHI) {
+				player.engaLHI = engaHandicapRating;
+				player.engaLHICalculationDate = datetime;
+			} else if (player.engaLHI && moment(datetime).diff(moment(player.engaLHICalculationDate), 'days') > 365) {
+				const query = Round.find();
+				query.sort({ 'handicapRating': -1 });
+				query.where({
+					'course': '62b4199accd73fe51e870525', // Enga course id
+					'datetime': { $gte: moment(datetime).add(-1, 'years') }
+				});
+				query.limit(1);
+
+				const lastYearBestRound = await query.exec();
+				player.engaLHI = lastYearBestRound.handicapRating;
+				player.engaLHICalculationDate = datetime;
+			}
+
+			let newHandicapRating = engaHandicapRating;
+
+			if (engaHandicapRating - player.engaLHI >= 5) {
+				newHandicapRating = player.engaLHI + 5;
+			} else if (engaHandicapRating - player.engaLHI >= 3) {
+				newHandicapRating = player.engaLHI + 3;
+				newHandicapRating += (engaHandicapRating - newHandicapRating) / 2;
+			}
+
+			newHandicapRating = Math.round(newHandicapRating * 10) / 10;
+
+			player.engaHandicapRating = newHandicapRating;
+			await player.save();
 		}
-	
+
 		const newScorecard = new Scorecard({
 			datetime: datetime,
 			weather: req.body.weather,
@@ -101,5 +170,63 @@ router.post('/', checkAuth, async (req, res) => {
 		return res.status(500);
 	}
 });
+
+function calculateHandicapRating(rounds) {
+	const ordered_rows = rounds.sort((a, b) => (getScore(a)) - (getScore(b)));
+
+	if (ordered_rows.length === 3) {
+		return getScore(ordered_rows[0]) - 2;
+	}
+
+	if (ordered_rows.length === 4) {
+		return getScore(ordered_rows[0]) - 1;
+	}
+
+	if (ordered_rows.length === 5) {
+		return getScore(ordered_rows[0]);
+	}
+
+	if (ordered_rows.length === 6) {
+		const two_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 2);
+		return (two_lowest_scores.reduce((a, b) => a + b, 0) / 2) - 1;
+	}
+
+	if (ordered_rows.length >= 7 && ordered_rows.length <= 8) {
+		const two_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 2);
+		return two_lowest_scores.reduce((a, b) => a + b, 0) / 2;
+	}
+
+	if (ordered_rows.length >= 9 && ordered_rows.length <= 11) {
+		const three_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 3);
+		return three_lowest_scores.reduce((a, b) => a + b, 0) / 3;
+	}
+
+	if (ordered_rows.length >= 12 && ordered_rows.length <= 14) {
+		const four_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 4);
+		return four_lowest_scores.reduce((a, b) => a + b, 0) / 4;
+	}
+
+	if (ordered_rows.length >= 15 && ordered_rows.length <= 16) {
+		const five_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 5);
+		return five_lowest_scores.reduce((a, b) => a + b, 0) / 5;
+	}
+
+	if (ordered_rows.length >= 17 && ordered_rows.length <= 18) {
+		const six_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 6);
+		return six_lowest_scores.reduce((a, b) => a + b, 0) / 6;
+	}
+
+	if (ordered_rows.length === 19) {
+		const seven_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 7);
+		return seven_lowest_scores.reduce((a, b) => a + b, 0) / 7;
+	}
+
+	const eight_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 8);
+	return eight_lowest_scores.reduce((a, b) => a + b, 0) / 8;
+}
+
+function getScore(round) {
+	return round.numberOfThrows - round.course.par;
+}
 
 module.exports = router;
