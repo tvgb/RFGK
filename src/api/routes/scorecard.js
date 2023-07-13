@@ -81,13 +81,14 @@ router.post('/', checkAuth, async (req, res) => {
 			});
 
 			const player = await Player.findById(round.player._id);
+			console.log('🚀 ~ file: scorecard.js:84 ~ router.post ~ player:', player);
 
 			if (course._id === '62b4199accd73fe51e870525' && player.engaHandicapRating) {
 				newRound.handicapRating = player.engaHandicapRating;
 			}
 
-			const savedNewRound = await newRound.save();
-			roundIds.push(savedNewRound._id);
+			// const savedNewRound = await newRound.save();
+			// roundIds.push(savedNewRound._id);
 
 			// Calculate new handicap rating for player if round is played on Enga
 
@@ -104,7 +105,12 @@ router.post('/', checkAuth, async (req, res) => {
 			});
 			query.limit(20);
 
+
 			const allPlayerRoundsOnEnga = await query.exec();
+
+
+
+			console.log('🚀 ~ file: scorecard.js:108 ~ router.post ~ allPlayerRoundsOnEnga:', allPlayerRoundsOnEnga);
 
 			// Handicap rating cannot be calculated if player has less than 3 rounds on Enga
 			if (allPlayerRoundsOnEnga.length < 3) {
@@ -112,6 +118,7 @@ router.post('/', checkAuth, async (req, res) => {
 			}
 
 			const engaHandicapRating = calculateHandicapRating(allPlayerRoundsOnEnga);
+			console.log('🚀 ~ file: scorecard.js:117 ~ router.post ~ engaHandicapRating:', engaHandicapRating);
 
 			// LHI cannot be calculated if player has less than 20 rounds on Enga
 			if (allPlayerRoundsOnEnga.length < 20) {
@@ -160,9 +167,9 @@ router.post('/', checkAuth, async (req, res) => {
 			rounds: roundIds
 		});
 
-		const storedScorecard = await newScorecard.save();
+		// const storedScorecard = await newScorecard.save();
 
-		return res.json(storedScorecard);
+		return res.json('storedScorecard');
 
 	} catch (error) {
 		console.log(error);

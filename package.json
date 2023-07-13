@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./node_modules/nodemon/bin/nodemon.js server.js --exec \"npm run lint && node\"",
-    "lint": "eslint **/*.js",
-    "test": "mocha"
+    "lint": "eslint **/*.js"
   },
   "author": "Trym Vegard Gjelseth-Borgen",
   "license": "ISC",
@@ -28,8 +27,5 @@
     "nodemailer": "^6.4.16",
     "nodemon": "^3.0.1",
     "path": "^0.12.7"
-  },
-  "devDependencies": {
-    "mocha": "^10.2.0"
   }
 }
