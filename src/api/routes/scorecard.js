@@ -50,7 +50,6 @@ router.get('/', async (req, res) => {
 
 	} catch (error) {
 		console.log(error);
-
 		return res.status(500);
 	}
 });
@@ -81,7 +80,6 @@ router.post('/', checkAuth, async (req, res) => {
 			});
 
 			const player = await Player.findById(round.player._id);
-			console.log('🚀 ~ file: scorecard.js:84 ~ router.post ~ player:', player);
 
 			if (course._id === '62b4199accd73fe51e870525' && player.engaHandicapRating) {
 				newRound.handicapRating = player.engaHandicapRating;
@@ -91,7 +89,6 @@ router.post('/', checkAuth, async (req, res) => {
 			roundIds.push(savedNewRound._id);
 
 			// Calculate new handicap rating for player if round is played on Enga
-
 			if (course._id !== '62b4199accd73fe51e870525') {
 				continue;
 			}
@@ -105,28 +102,23 @@ router.post('/', checkAuth, async (req, res) => {
 			});
 			query.limit(20);
 
+
 			const allPlayerRoundsOnEnga = await query.exec();
-			console.log('🚀 ~ file: scorecard.js:109 ~ router.post ~ allPlayerRoundsOnEnga:', allPlayerRoundsOnEnga);
 
 			// Handicap rating cannot be calculated if player has less than 3 rounds on Enga
 			if (allPlayerRoundsOnEnga.length < 3) {
 				continue;
 			}
 
-			const engaHandicapRating = calculateHandicapRating(allPlayerRoundsOnEnga);
-			console.log('🚀 ~ file: scorecard.js:117 ~ router.post ~ engaHandicapRating:', engaHandicapRating);
-
-
+			let engaHandicapRating = calculateHandicapRating(allPlayerRoundsOnEnga);
+			engaHandicapRating = Math.round(engaHandicapRating * 10) / 10.0;
 
 			// LHI cannot be calculated if player has less than 20 rounds on Enga
 			if (allPlayerRoundsOnEnga.length < 20) {
-
-				player.engaHandicapRating = Math.min(engaHandicapRating, 54);
-				await player.save();
+				player.engaHandicapRating = Math.min(engaHandicapRating, 54.0);
+				// await player.save();
 				continue;
 			}
-
-			console.log('The thing thinks that there are more than 20 rounds on Enga');
 
 			if (!player.engaLHI) {
 				player.engaLHI = engaHandicapRating;
@@ -146,20 +138,17 @@ router.post('/', checkAuth, async (req, res) => {
 			}
 
 			let newHandicapRating = engaHandicapRating;
-			console.log('🚀 ~ file: scorecard.js:149 ~ router.post ~ newHandicapRating:', newHandicapRating);
-
-
 
 			if (engaHandicapRating - player.engaLHI >= 5) {
 				newHandicapRating = player.engaLHI + 5;
 			} else if (engaHandicapRating - player.engaLHI >= 3) {
 				newHandicapRating = player.engaLHI + 3;
-				newHandicapRating += (engaHandicapRating - newHandicapRating) / 2;
+				newHandicapRating += (engaHandicapRating - newHandicapRating) / 2.0;
 			}
 
-			newHandicapRating = Math.round(newHandicapRating * 10) / 10;
+			newHandicapRating = Math.round(newHandicapRating * 10) / 10.0;
 
-			player.engaHandicapRating = Math.min(newHandicapRating, 54);
+			player.engaHandicapRating = Math.min(newHandicapRating, 54.0);
 			await player.save();
 		}
 
@@ -170,18 +159,13 @@ router.post('/', checkAuth, async (req, res) => {
 			course: course._id,
 			rounds: roundIds
 		});
-		console.log('🚀 ~ file: scorecard.js:173 ~ router.post ~ newScorecard:', newScorecard);
-
-
 
 		const storedScorecard = await newScorecard.save();
-		console.log('🚀 ~ file: scorecard.js:178 ~ router.post ~ storedScorecard:', storedScorecard);
 
 		return res.json(storedScorecard);
 
 	} catch (error) {
 		console.log(error);
-
 		return res.status(500);
 	}
 });
@@ -203,41 +187,41 @@ function calculateHandicapRating(rounds) {
 
 	if (ordered_rows.length === 6) {
 		const two_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 2);
-		return (two_lowest_scores.reduce((a, b) => a + b, 0) / 2) - 1;
+		return (two_lowest_scores.reduce((a, b) => a + b, 0) / 2.0) - 1;
 	}
 
 	if (ordered_rows.length >= 7 && ordered_rows.length <= 8) {
 		const two_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 2);
-		return two_lowest_scores.reduce((a, b) => a + b, 0) / 2;
+		return two_lowest_scores.reduce((a, b) => a + b, 0) / 2.0;
 	}
 
 	if (ordered_rows.length >= 9 && ordered_rows.length <= 11) {
 		const three_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 3);
-		return three_lowest_scores.reduce((a, b) => a + b, 0) / 3;
+		return three_lowest_scores.reduce((a, b) => a + b, 0) / 3.0;
 	}
 
 	if (ordered_rows.length >= 12 && ordered_rows.length <= 14) {
 		const four_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 4);
-		return four_lowest_scores.reduce((a, b) => a + b, 0) / 4;
+		return four_lowest_scores.reduce((a, b) => a + b, 0) / 4.0;
 	}
 
 	if (ordered_rows.length >= 15 && ordered_rows.length <= 16) {
 		const five_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 5);
-		return five_lowest_scores.reduce((a, b) => a + b, 0) / 5;
+		return five_lowest_scores.reduce((a, b) => a + b, 0) / 5.0;
 	}
 
 	if (ordered_rows.length >= 17 && ordered_rows.length <= 18) {
 		const six_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 6);
-		return six_lowest_scores.reduce((a, b) => a + b, 0) / 6;
+		return six_lowest_scores.reduce((a, b) => a + b, 0) / 6.0;
 	}
 
 	if (ordered_rows.length === 19) {
 		const seven_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 7);
-		return seven_lowest_scores.reduce((a, b) => a + b, 0) / 7;
+		return seven_lowest_scores.reduce((a, b) => a + b, 0) / 7.0;
 	}
 
 	const eight_lowest_scores = ordered_rows.map((row) => getScore(row)).slice(0, 8);
-	return eight_lowest_scores.reduce((a, b) => a + b, 0) / 8;
+	return eight_lowest_scores.reduce((a, b) => a + b, 0) / 8.0;
 }
 
 function getScore(round) {
