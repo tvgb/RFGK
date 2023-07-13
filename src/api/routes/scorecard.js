@@ -26,7 +26,6 @@ router.get('/', async (req, res) => {
 		});
 
 		// Get round by year if optional query param year is set
-
 		if (req.query.year && req.query.year !== 'all') {
 			const year = parseInt(req.query.year, 10);
 			const startDate = moment(`${year}-01-01`, moment.DATE);
@@ -116,7 +115,7 @@ router.post('/', checkAuth, async (req, res) => {
 			// LHI cannot be calculated if player has less than 20 rounds on Enga
 			if (allPlayerRoundsOnEnga.length < 20) {
 				player.engaHandicapRating = Math.min(engaHandicapRating, 54.0);
-				// await player.save();
+				await player.save();
 				continue;
 			}
 
