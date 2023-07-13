@@ -81,6 +81,7 @@ router.post('/', checkAuth, async (req, res) => {
 			});
 
 			const player = await Player.findById(round.player._id);
+			console.log('🚀 ~ file: scorecard.js:84 ~ router.post ~ player:', player);
 
 			if (course._id === '62b4199accd73fe51e870525' && player.engaHandicapRating) {
 				newRound.handicapRating = player.engaHandicapRating;
@@ -105,6 +106,7 @@ router.post('/', checkAuth, async (req, res) => {
 			query.limit(20);
 
 			const allPlayerRoundsOnEnga = await query.exec();
+			console.log('🚀 ~ file: scorecard.js:109 ~ router.post ~ allPlayerRoundsOnEnga:', allPlayerRoundsOnEnga);
 
 			// Handicap rating cannot be calculated if player has less than 3 rounds on Enga
 			if (allPlayerRoundsOnEnga.length < 3) {
@@ -112,13 +114,19 @@ router.post('/', checkAuth, async (req, res) => {
 			}
 
 			const engaHandicapRating = calculateHandicapRating(allPlayerRoundsOnEnga);
+			console.log('🚀 ~ file: scorecard.js:117 ~ router.post ~ engaHandicapRating:', engaHandicapRating);
+
+
 
 			// LHI cannot be calculated if player has less than 20 rounds on Enga
 			if (allPlayerRoundsOnEnga.length < 20) {
+
 				player.engaHandicapRating = Math.min(engaHandicapRating, 54);
 				await player.save();
 				continue;
 			}
+
+			console.log('The thing thinks that there are more than 20 rounds on Enga');
 
 			if (!player.engaLHI) {
 				player.engaLHI = engaHandicapRating;
@@ -138,6 +146,9 @@ router.post('/', checkAuth, async (req, res) => {
 			}
 
 			let newHandicapRating = engaHandicapRating;
+			console.log('🚀 ~ file: scorecard.js:149 ~ router.post ~ newHandicapRating:', newHandicapRating);
+
+
 
 			if (engaHandicapRating - player.engaLHI >= 5) {
 				newHandicapRating = player.engaLHI + 5;
@@ -159,8 +170,12 @@ router.post('/', checkAuth, async (req, res) => {
 			course: course._id,
 			rounds: roundIds
 		});
+		console.log('🚀 ~ file: scorecard.js:173 ~ router.post ~ newScorecard:', newScorecard);
+
+
 
 		const storedScorecard = await newScorecard.save();
+		console.log('🚀 ~ file: scorecard.js:178 ~ router.post ~ storedScorecard:', storedScorecard);
 
 		return res.json(storedScorecard);
 
